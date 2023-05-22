@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Tabela de Exibição</title>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}">
+</head>
+<body>
+    <div class="container">
+        <h1>Tabela de Exibição</h1>
+        <table class="table">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nome</th>
+                <th>CPF</th>
+                <th>Data de Admissão</th>
+                <th>Função Exercida</th>
+                <th>Remuneração</th>
+                <th>Gerente</th>
+                <th>Subordinados</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="colaborador:${listaColaboradores}">
+                <td th:text="${colaborador.getId()}"></td>
+                <td th:text="${colaborador.getNome()}"></td>
+                <td th:text="${colaborador.getCpf()}"></td>
+                <td th:text="${colaborador.getDataAdmissao()}"></td>
+                <td th:text="${colaborador.getFuncaoExercida()}"></td>
+                <td th:text="${colaborador.getRemuneracao()}"></td>
+                <td th:text="${colaborador.getGerente()}"></td>
+                <td th:text="${colaborador.getSubordinados().size()}"></td>
+                <td>
+                    <p>Editar</p>
+                    <p>Deletar</p>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>'
+</body>
+</html>
