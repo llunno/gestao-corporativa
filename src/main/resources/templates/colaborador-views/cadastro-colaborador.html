@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Cadastro de Colaboradores</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}">
+</head>
+<body>
+    <div class="container mt-5">
+        <h2 class="mb-4">Cadastro de Colaboradores</h2>
+        <form th:object="${colaborador}" th:action="@{/colaborador/save}" method="post">
+            <div class="form-group">
+                <label>Nome:</label>
+                <input type="text" class="form-control" th:field="*{nome}" required="required" />
+            </div>
+            <div class="form-group">
+                <label>CPF:</label>
+                <input type="text" class="form-control" th:field="*{cpf}" required="required" />
+            </div>
+            <div class="form-group">
+                <label>Data de Admissão:</label>
+                <input type="text" class="form-control" th:field="*{dataAdmissao}" required="required" />
+            </div>
+            <div class="form-group">
+                <label>Função Exercida:</label>
+                <input type="text" class="form-control" th:field="*{funcaoExercida}" required="required" />
+            </div>
+            <div class="form-group">
+                <label>Remuneração:</label>
+                <input type="text" class="form-control" th:field="*{remuneracao}" required="required" />
+            </div>
+            <button type="submit" class="btn btn-primary my-2">Save</button>
+        </form>
+    </div>
+</body>
+</html>
