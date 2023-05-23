@@ -22,25 +22,34 @@ public class ColaboradorController {
     @PostMapping("/save")
     public String save(Colaborador colaborador){
         colaboradorService.save(colaborador);
-        return "redirect:/colaborador/cadastro";
+        return "redirect:/colaborador/lista";
     }
 
     @GetMapping("/cadastro")
     public String exibirCadastroColaborador(Model model){
         model.addAttribute("colaborador", new Colaborador());
+        model.addAttribute("isUpdate", false);
         return "colaborador-views/cadastro-colaborador";
     }
 
+    @GetMapping("/cadastro/{id}")
+    public String exibirTelaUpdateColaborador(@PathVariable UUID id, Model model) {
+        Colaborador colaborador = colaboradorService.findById(id);
+        model.addAttribute("colaborador", colaborador);
+        model.addAttribute("isUpdate", true);
+        return "colaborador-views/cadastro-colaborador";
+    }
+
+    @ResponseBody
     @DeleteMapping("/delete/{id}")
-    public String deletarColaborador(@PathVariable UUID id){
+    public void deletarColaborador(@PathVariable UUID id){
         colaboradorService.delete(id);
-        return "colaborador-views/cadastro-colaborador";
     }
 
-    @PutMapping("/update")
-    public String atualizarColaborador(@RequestBody Colaborador colaborador){
-        colaboradorService.update(colaborador);
-        return "colaborador-views/cadastro-colaborador";
+    @PutMapping("/update/{id}")
+    public String atualizarColaborador(@PathVariable UUID id,Colaborador colaborador){
+        colaboradorService.update(colaborador, id);
+        return "redirect:/colaborador/lista";
     }
 
     @GetMapping("/lista")

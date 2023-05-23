@@ -22,8 +22,8 @@ public class ColaboradorService implements IRepositoryMethods<Colaborador, UUID>
     }
 
     @Override
-    public Colaborador update(Colaborador entity) {
-        Colaborador colaboradorInDB = iColaboradorRepository.getReferenceById(entity.getId());
+    public Colaborador update(Colaborador entity, UUID id) {
+        Colaborador colaboradorInDB = iColaboradorRepository.getReferenceById(id);
         colaboradorInDB.setNome(entity.getNome());
         colaboradorInDB.setCpf(entity.getCpf());
         colaboradorInDB.setDataAdmissao(entity.getDataAdmissao());
