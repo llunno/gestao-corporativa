@@ -8,7 +8,7 @@
 <body>
     <div class="container mt-5">
         <h2 class="mb-4">Cadastro de Colaboradores</h2>
-        <form th:object="${colaborador}" th:action="@{/colaborador/save}" method="post">
+        <form th:if="${!isUpdate}" th:object="${colaborador}" th:action="@{/colaborador/save}" th:method="POST">
             <div class="form-group">
                 <label>Nome:</label>
                 <input type="text" class="form-control" th:field="*{nome}" required="required" />
@@ -29,8 +29,43 @@
                 <label>Remuneração:</label>
                 <input type="text" class="form-control" th:field="*{remuneracao}" required="required" />
             </div>
-            <button type="submit" class="btn btn-primary my-2">Save</button>
+            <button type="submit" class="btn btn-primary my-2">Cadastrar</button>
+        </form>
+        <form th:if="${isUpdate}" th:object="${colaborador}" th:action="@{/colaborador/update/{id}(id=${colaborador.getId()})}" th:method="PUT">
+            <div class="form-group">
+                <label>Nome:</label>
+                <input type="text" class="form-control" th:field="*{nome}" required="required" />
+            </div>
+            <div class="form-group">
+                <label>CPF:</label>
+                <input type="text" class="form-control" th:field="*{cpf}" required="required" />
+            </div>
+            <div class="form-group">
+                <label>Data de Admissão:</label>
+                <input type="text" class="form-control" th:field="*{dataAdmissao}" required="required" />
+            </div>
+            <div class="form-group">
+                <label>Remuneração:</label>
+                <input type="text" class="form-control" th:field="*{remuneracao}" required="required" />
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" id="colaboradorCheckbox" value="colaborador" name="funcao" th:field="*{funcaoExercida}"/>
+                <label class="form-check-label" for="colaboradorCheckbox">
+                    Colaborador
+                </label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" id="gerenteCheckbox" value="gerente" name="funcao" th:field="*{funcaoExercida}" />
+                <label class="form-check-label" for="gerenteCheckbox">
+                    Gerente
+                </label>
+            </div>
+            <button type="submit" class="btn btn-primary my-2">Atualizar</button>
         </form>
     </div>
+
+    <script>
+
+    </script>
 </body>
 </html>

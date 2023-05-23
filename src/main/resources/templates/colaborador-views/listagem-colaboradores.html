@@ -6,39 +6,74 @@
     <link rel="stylesheet" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}">
 </head>
 <body>
-    <div class="container">
-        <h1>Tabela de Exibição</h1>
-        <table class="table">
-            <thead>
-            <tr>
-                <th>ID</th>
-                <th>Nome</th>
-                <th>CPF</th>
-                <th>Data de Admissão</th>
-                <th>Função Exercida</th>
-                <th>Remuneração</th>
-                <th>Gerente</th>
-                <th>Subordinados</th>
-                <th></th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="colaborador:${listaColaboradores}">
-                <td th:text="${colaborador.getId()}"></td>
-                <td th:text="${colaborador.getNome()}"></td>
-                <td th:text="${colaborador.getCpf()}"></td>
-                <td th:text="${colaborador.getDataAdmissao()}"></td>
-                <td th:text="${colaborador.getFuncaoExercida()}"></td>
-                <td th:text="${colaborador.getRemuneracao()}"></td>
-                <td th:text="${colaborador.getGerente()}"></td>
-                <td th:text="${colaborador.getSubordinados().size()}"></td>
-                <td>
-                    <p>Editar</p>
-                    <p>Deletar</p>
-                </td>
-            </tr>
-            </tbody>
-        </table>
-    </div>'
+<nav class="navbar navbar-expand-lg navbar-dark" data-bs-theme="dark" style="background-color:#cc7a1f">
+    <a class="navbar-brand mx-2" href="#">Gerenciador de Funcionários</a>
+
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor01" aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarColor01">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+                <a class="nav-link" href="/colaborador/lista">Colaboradores</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">Gerentes</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+    <div class="container-fluid my-4 mx-auto">
+        <h1 class="text-center">Tabela de Exibição</h1>
+        <section class="table-wrapper overflow-auto m-0 p-0">
+            <table class="table table-hover align-middle text-center m-0" style="white-space:nowrap">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nome</th>
+                    <th>CPF</th>
+                    <th>Data de Admissão</th>
+                    <th>Função Exercida</th>
+                    <th>Remuneração</th>
+                    <th>Gerente</th>
+                    <th>Subordinados</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="colaborador:${listaColaboradores}">
+                    <td th:text="${colaborador.getId()}"></td>
+                    <td th:text="${colaborador.getNome()}"></td>
+                    <td th:text="${colaborador.getCpf()}"></td>
+                    <td th:text="${colaborador.getDataAdmissao()}"></td>
+                    <td th:text="${colaborador.getFuncaoExercida()}"></td>
+                    <td th:text="${colaborador.getRemuneracao()}"></td>
+                    <td th:text="${colaborador.getGerente()}"></td>
+                    <td th:text="${colaborador.getSubordinados().size()}"></td>
+                    <td class="d-flex justify-content-center align-middle gap-2">
+                        <a th:href="@{/colaborador/cadastro/{id}(id=${colaborador.getId()})}" class="text-decoration-none btn btn-primary m-0">Editar</a>
+                        <button th:data-id="${colaborador.getId()}" class="btn btn-danger m-0" onclick="deletar(this.getAttribute('data-id'))">Deletar</button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </section>
+        <button class="btn btn-dark mt-2" onclick="cadastrar()">Cadastrar +</button>
+    </div>
+
+<script type="text/javascript">
+    function deletar(id) {
+        fetch("/colaborador/delete/" + id, {
+            method: "DELETE"
+        }).then(function() {
+            window.location.reload()
+        })
+    }
+
+    function cadastrar() {
+        window.location.href = "/colaborador/cadastro"
+    }
+</script>
 </body>
 </html>
