@@ -1,0 +1,26 @@
+<div th:fragment="common-form">
+  <div class="form-group">
+    <label>Nome:</label>
+    <input type="text" class="form-control" th:field="*{nome}" required="required" />
+  </div>
+  <div class="form-group">
+    <label>CPF:</label>
+    <input type="text" id="cpf" class="form-control" th:field="*{cpf}" required="required" />
+  </div>
+  <div class="form-group">
+    <label>Data de Admissão:</label>
+    <input type="text" class="form-control date-input" th:field="*{dataAdmissao}" required="required" />
+  </div>
+  <div class="form-group">
+    <label>Função Exercida:</label>
+    <input type="text" class="form-control" th:field="*{funcaoExercida}" required="required" />
+  </div>
+  <div class="form-group">
+    <label>Remuneração:</label>
+    <input type="number" class="form-control" th:field="*{remuneracao}" required="required" />
+  </div>
+  <div class="form-group">
+    <label>Departamento:</label>
+    <input type="text" class="form-control" th:field="*{departamento}" required="required" />
+  </div>
+</div>
