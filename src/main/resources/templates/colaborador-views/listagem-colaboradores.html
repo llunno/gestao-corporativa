@@ -2,30 +2,14 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Tabela de Exibição</title>
+    <title>Tabela de Colaboradores</title>
     <link rel="stylesheet" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/styles.css}">
 </head>
 <body>
-<nav class="navbar navbar-expand-lg navbar-dark" data-bs-theme="dark" style="background-color:#cc7a1f">
-    <a class="navbar-brand mx-2" href="#">Gerenciador de Funcionários</a>
-
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor01" aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-
-    <div class="collapse navbar-collapse" id="navbarColor01">
-        <ul class="navbar-nav mr-auto">
-            <li class="nav-item">
-                <a class="nav-link" href="/colaborador/lista">Colaboradores</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">Gerentes</a>
-            </li>
-        </ul>
-    </div>
-</nav>
+    <nav th:replace="~{fragments/nav-fragment :: nav}"></nav>
     <div class="container-fluid my-4 mx-auto">
-        <h1 class="text-center">Tabela de Exibição</h1>
+        <h1 class="text-center">Tabela de colaboradores</h1>
         <section class="table-wrapper overflow-auto m-0 p-0">
             <table class="table table-hover align-middle text-center m-0" style="white-space:nowrap">
                 <thead>
@@ -35,8 +19,10 @@
                     <th>CPF</th>
                     <th>Data de Admissão</th>
                     <th>Função Exercida</th>
+                    <th>Departamento</th>
                     <th>Remuneração</th>
-                    <th>Gerente</th>
+                    <th>Nível Hierárquico</th>
+                    <th>Superior</th>
                     <th>Subordinados</th>
                     <th></th>
                 </tr>
@@ -48,10 +34,42 @@
                     <td th:text="${colaborador.getCpf()}"></td>
                     <td th:text="${colaborador.getDataAdmissao()}"></td>
                     <td th:text="${colaborador.getFuncaoExercida()}"></td>
+                    <td th:text="${colaborador.getDepartamento()}"></td>
                     <td th:text="${colaborador.getRemuneracao()}"></td>
-                    <td th:text="${colaborador.getGerente()}"></td>
-                    <td th:text="${colaborador.getSubordinados().size()}"></td>
-                    <td class="d-flex justify-content-center align-middle gap-2">
+                    <td th:text="${colaborador.getNivelHierarquico()}"></td>
+                    <td th:if="${colaborador.superiorDireto != null}" th:text="${colaborador.getSuperiorDireto().getNome()}"></td>
+                    <td th:if="${colaborador.superiorDireto == null and colaborador.nivelHierarquico != 'Gerente'}" th:text="${'Sem superior direto'}"></td>
+                    <td th:if="${colaborador.nivelHierarquico == 'Gerente'}" th:text="${'Presidente'}"></td>
+                    <td>
+                        <button class="btn btn-link" th:if="${colaborador.subordinados.size() > 0}" th:text="${colaborador.subordinados.size()}"
+                                data-bs-toggle="modal" th:data-bs-target="'#'+${colaborador.nome.toLowerCase().replace(' ', '')+colaborador.id+colaborador.cpf.replace('.','').replace('-','')}"></button>
+
+                        <a th:if="${colaborador.subordinados.size() <= 0}" th:text="${'Nenhum'}" disabled></a>
+                        <div class="modal fade" th:id="${colaborador.nome.toLowerCase().replace(' ', '')+colaborador.id+colaborador.cpf.replace('.','').replace('-','')}"
+                             tabindex="-1" aria-labelledby="myModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h1 class="modal-title fs-5" id="MyModalLabel">Colaboradores Associados</h1>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="container-boxes d-flex justify-content-start gap-2">
+                                            <div th:each="subordinado:${colaborador.subordinados}" class="form-check div-checkbox">
+                                                <p th:text="'ID: ' + ${subordinado.id}"></p>
+                                                <p th:text="'Nome: '+ ${subordinado.nome}"></p>
+                                                <p th:text="'CPF: ' + ${subordinado.cpf}"></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="justify-content-center align-middle gap-2">
                         <a th:href="@{/colaborador/cadastro/{id}(id=${colaborador.getId()})}" class="text-decoration-none btn btn-primary m-0">Editar</a>
                         <button th:data-id="${colaborador.getId()}" class="btn btn-danger m-0" onclick="deletar(this.getAttribute('data-id'))">Deletar</button>
                     </td>
@@ -62,6 +80,9 @@
         <button class="btn btn-dark mt-2" onclick="cadastrar()">Cadastrar +</button>
     </div>
 
+    <footer th:replace="~{fragments/footer-fragment :: footer}"></footer>
+
+<script rel="stylesheet" th:src="@{/webjars/bootstrap/js/bootstrap.bundle.min.js}"></script>
 <script type="text/javascript">
     function deletar(id) {
         fetch("/colaborador/delete/" + id, {
