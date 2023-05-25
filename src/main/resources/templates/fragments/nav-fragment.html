@@ -10,4 +10,8 @@
       </li>
     </ul>
   </div>
+  <form th:action="@{/colaborador/lista}" th:method="POST" class="d-flex me-4" role="search">
+    <input class="form-control me-2" name="ano" type="text" placeholder="Insira um ano..." aria-label="Search">
+    <button class="btn btn-light" type="submit">Pesquisar</button>
+  </form>
 </nav>

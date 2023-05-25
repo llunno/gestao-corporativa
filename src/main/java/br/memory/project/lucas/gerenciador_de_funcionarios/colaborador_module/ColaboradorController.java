@@ -63,4 +63,11 @@ public class ColaboradorController {
         model.addAttribute("listaColaboradores", colaboradores);
         return "colaborador-views/listagem-colaboradores";
     }
+
+    @PostMapping("/lista")
+    public String exibirListaColaboradoresPorAno(Model model, String ano) {
+        List<Colaborador> colaboradores = (List<Colaborador>) colaboradorService.findByYear(Integer.valueOf(ano));
+        model.addAttribute("listaColaboradores", colaboradores);
+        return "colaborador-views/listagem-colaboradores";
+    }
 }
