@@ -4,12 +4,16 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import java.util.UUID;
+import java.time.LocalDate;
+import java.util.Collection;
 
 @Repository
-public interface IColaboradorRepository extends JpaRepository<Colaborador, UUID> {
+public interface IColaboradorRepository extends JpaRepository<Colaborador, Integer> {
 
-    @Query("SELECT c FROM Colaborador c WHERE c.dataAdmissao = :dataAdmissao")
-    Colaborador findByYear(String dataAdmissao);
+    //Collection<Colaborador> findAllByDataAdmissao(LocalDate dataAdmissao);
+    Collection<Colaborador> findAllByNivelHierarquico(String nivelHierarquico);
 
+
+    @Query("from Colaborador c where year (c.dataAdmissao) = :ano")
+    Collection<Colaborador> getByYear(int ano);
 }
