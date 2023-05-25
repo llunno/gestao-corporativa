@@ -6,7 +6,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.UUID;
 
 @Controller
 @RequestMapping("/colaborador")
@@ -20,7 +19,7 @@ public class ColaboradorController {
     }
 
     @PostMapping("/save")
-    public String save(Colaborador colaborador){
+    public String save(Colaborador colaborador) {
         colaboradorService.save(colaborador);
         return "redirect:/colaborador/lista";
     }
@@ -28,26 +27,32 @@ public class ColaboradorController {
     @GetMapping("/cadastro")
     public String exibirCadastroColaborador(Model model){
         model.addAttribute("colaborador", new Colaborador());
+        model.addAttribute("colaboradores", colaboradorService.findByNivelHierarquico("Colaborador"));
+        model.addAttribute("gerentes", colaboradorService.findByNivelHierarquico("Gerente"));
+        model.addAttribute("supervisores", colaboradorService.findByNivelHierarquico("Supervisor"));
         model.addAttribute("isUpdate", false);
-        return "colaborador-views/cadastro-colaborador";
+        return "colaborador-views/cadastro";
     }
 
     @GetMapping("/cadastro/{id}")
-    public String exibirTelaUpdateColaborador(@PathVariable UUID id, Model model) {
+    public String exibirTelaUpdateColaborador(@PathVariable Integer id, Model model) {
         Colaborador colaborador = colaboradorService.findById(id);
         model.addAttribute("colaborador", colaborador);
+        model.addAttribute("colaboradores", colaboradorService.findByNivelHierarquico("Colaborador"));
+        model.addAttribute("gerentes", colaboradorService.findByNivelHierarquico("Gerente"));
+        model.addAttribute("supervisor", colaboradorService.findByNivelHierarquico("Supervisor"));
         model.addAttribute("isUpdate", true);
-        return "colaborador-views/cadastro-colaborador";
+        return "colaborador-views/cadastro";
     }
 
     @ResponseBody
     @DeleteMapping("/delete/{id}")
-    public void deletarColaborador(@PathVariable UUID id){
+    public void deletarColaborador(@PathVariable Integer id){
         colaboradorService.delete(id);
     }
 
     @PutMapping("/update/{id}")
-    public String atualizarColaborador(@PathVariable UUID id,Colaborador colaborador){
+    public String atualizarColaborador(@PathVariable Integer id,Colaborador colaborador){
         colaboradorService.update(colaborador, id);
         return "redirect:/colaborador/lista";
     }
