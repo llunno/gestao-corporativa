@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Cadastro de Colaboradores</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/styles.css}">
+    <link rel="stylesheet" th:href="@{https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.10.0/css/bootstrap-datepicker.min.css}">
+</head>
+<body>
+<nav th:replace="~{fragments/nav-fragment :: nav}"></nav>
+    <div class="container my-5 mx-auto">
+        <h2 class="mb-4">Cadastro de Colaboradores</h2>
+        <form th:if="${!isUpdate}" th:object="${colaborador}" th:action="@{/colaborador/save}" th:method="POST">
+            <div th:replace="~{fragments/common-form-fields :: common-form}"></div>
+
+            <section id="gerente-section">
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="nivelHierarquico" id="gerente" value="Gerente">
+                    <label class="form-check-label" for="gerente">
+                        Gerente
+                    </label>
+                </div>
+                <section class="overflow-auto selection-section" hidden>
+                    <p class="mt-2"  th:value="${1}" th:field="*{superiorDireto}">Todos os gerentes são subordinados diretamente ao presidente</p>
+                </section>
+                <section id="supervisor-subordinado-section" class="overflow-auto selection-section" hidden>
+                    <p class="mt-2">Selecione os supervisores subordinados a este gerente, caso haja algum:</p>
+                    <div  class="container-boxes d-flex justify-content-start gap-2">
+                        <div th:each="supervisor:${supervisores}" th:if="${supervisor.superiorDireto == null}" class="div-checkbox form-check">
+                            <input type="checkbox" name="supervisor-subordinado" th:value="${supervisor.getId()}" th:field="*{subordinados}"/>
+                            <p th:text="'ID: ' + ${supervisor.getId()}"></p>
+                            <p th:text="'Nome: ' + ${supervisor.getNome()}"></p>
+                            <p th:text="'CPF: ' + ${supervisor.getCpf()}"></p>
+                            <p th:text="'Nível Hierárquerico: ' + ${supervisor.getNivelHierarquico()}"></p>
+                        </div>
+                    </div>
+                </section>
+            </section>
+
+            <section id="supervisor-section">
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="nivelHierarquico" id="supervisor" value="Supervisor">
+                    <label class="form-check-label" for="supervisor">
+                        Supervisor
+                    </label>
+                </div>
+                <section id="gerente-chefe-section" class="overflow-auto selection-section" hidden>
+                    <p class="mt-2">Selecione o gerente deste supervisor, caso haja algum:</p>
+                    <div  class="container-boxes d-flex justify-content-start gap-2">
+                        <div th:each="gerente:${gerentes}" class="div-radio div-radio-gerente form-check">
+                            <input type="radio" name="gerente-chefe" th:value="${gerente.getId()}" th:field="*{superiorDireto}"/>
+                            <p th:text="'ID: ' + ${gerente.getId()}"></p>
+                            <p th:text="'Nome: ' + ${gerente.getNome()}"></p>
+                            <p th:text="'CPF: ' + ${gerente.getCpf()}"></p>
+                            <p th:text="'Nível Hierárquerico: ' + ${gerente.getNivelHierarquico()}"></p>
+                        </div>
+                    </div>
+                </section>
+                <section id="colaborador-subordinado-section" class="overflow-auto selection-section" hidden>
+                    <p class="mt-2">Selecione os subordinados deste colaborador, caso haja algum:</p>
+                    <div  class="container-boxes d-flex justify-content-start gap-2">
+                        <div th:each="colaborador:${colaboradores}" th:if="${colaborador.superiorDireto == null}" class="div-checkbox form-check">
+                            <input type="checkbox" name="colaborador-subordinado" th:value="${colaborador.getId()}" th:field="*{subordinados}"/>
+                            <p th:text="'ID: ' + ${colaborador.getId()}"></p>
+                            <p th:text="'Nome: ' + ${colaborador.getNome()}"></p>
+                            <p th:text="'CPF: ' + ${colaborador.getCpf()}"></p>
+                            <p th:text="'Nível Hierárquerico: ' + ${colaborador.getNivelHierarquico()}"></p>
+                        </div>
+                    </div>
+                </section>
+            </section>
+
+            <section id="colaborador-section">
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="nivelHierarquico" id="colaborador" value="Colaborador">
+                    <label class="form-check-label" for="colaborador">
+                        Colaborador
+                    </label>
+                </div>
+                <section id="supervisor-chefe-section" class="overflow-auto selection-section" hidden>
+                    <p class="mt-2">Selecione o supervisor deste colaborador, caso haja algum:</p>
+                    <div  class="container-boxes d-flex justify-content-start gap-2">
+                        <div th:each="supervisor:${supervisores}" class="div-radio div-radio-supervisor form-check">
+                            <input type="radio" name="supervisor-chefe" th:value="${supervisor.getId()}" th:field="*{superiorDireto}"/>
+                            <p th:text="'ID: ' + ${supervisor.getId()}"></p>
+                            <p th:text="'Nome: ' + ${supervisor.getNome()}"></p>
+                            <p th:text="'CPF: ' + ${supervisor.getCpf()}"></p>
+                            <p th:text="'Nível Hierárquerico: ' + ${supervisor.getNivelHierarquico()}"></p>
+                        </div>
+                    </div>
+                </section>
+            </section>
+
+            <button type="submit" class="btn btn-primary my-3">Cadastrar</button>
+        </form>
+        <form th:if="${isUpdate}" th:object="${colaborador}" th:action="@{/colaborador/update/{id}(id=${colaborador.getId()})}" th:method="PUT">
+            <div th:replace="~{fragments/common-form-fields :: common-form}"></div>
+
+            <button type="submit" class="btn btn-primary my-3">Atualizar</button>
+        </form>
+    </div>
+
+    <footer th:replace="~{fragments/footer-fragment :: footer}"></footer>
+
+    <script th:src="@{/webjars/jquery/jquery.js}"></script>
+    <script th:src="@{https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js}"></script>
+    <script th:src="@{https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.10.0/locales/bootstrap-datepicker.pt-BR.min.js}"></script>
+    <script>
+        function maskcpf(v){
+            v=v.replace(/\D/g,"");
+            v=v.replace(/(\d{3})(\d)/,"$1.$2");
+            v=v.replace(/(\d{3})(\d)/,"$1.$2");
+            v=v.replace(/(\d{3})(\d{1,2})$/,"$1-$2");
+            return v;
+        }
+
+        window.onload = function(){
+            const cpfElement = document.getElementById("cpf")
+            cpfElement.setAttribute("maxlength", "14")
+            cpfElement.onkeyup = function(){
+                cpfElement.value = maskcpf(cpfElement.value);
+            }
+        }
+
+        const checkboxDivs = document.querySelectorAll(".div-checkbox")
+        checkboxDivs.forEach(function(element) {
+            element.addEventListener("click", function() {
+                const checkbox = element.querySelector("input[type=checkbox]");
+
+                checkbox.checked = !checkbox.checked;
+                element.classList.toggle("div-checkbox-selected");
+
+            });
+        });
+
+        const radioDivsSupervisor = document.querySelectorAll(".div-radio-supervisor")
+        radioDivsSupervisor.forEach(function(selected) {
+            selected.addEventListener("click", function() {
+                const radio = selected.querySelector("input[type=radio]");
+                radio.checked = true;
+                if (!selected.classList.contains("div-checkbox-selected")){
+                    selected.classList.add("div-checkbox-selected");
+                }
+
+                if(radio.checked){
+                    console.log("checked")
+                }
+
+                radioDivsSupervisor.forEach(function(nonSelected) {
+                    if(nonSelected !== selected){
+                        const radio = nonSelected.querySelector("input[type=radio]");
+                        radio.checked = false;
+                        nonSelected.classList.remove("div-checkbox-selected");
+                    }
+                });
+            });
+        });
+
+        const radioDivsGerente = document.querySelectorAll(".div-radio-gerente")
+        radioDivsGerente.forEach(function(selected) {
+            selected.addEventListener("click", function() {
+                const radio = selected.querySelector("input[type=radio]");
+                radio.checked = true;
+                selected.classList.toggle("div-checkbox-selected");
+
+                radioDivsGerente.forEach(function(nonSelected) {
+                    if(nonSelected !== selected){
+                        const radio = nonSelected.querySelector("input[type=radio]");
+                        radio.checked = false;
+                        nonSelected.classList.remove("div-checkbox-selected");
+                    }
+                });
+            });
+        });
+
+        const radioInputColaborador = document.getElementById("colaborador")
+        const radioInputSupervisor = document.getElementById("supervisor")
+        const radioInputGerente = document.getElementById("gerente")
+
+        radioInputColaborador.addEventListener("click", function(){
+            if (radioInputColaborador.checked){
+                const sectionSupervisorChef = document.getElementById("supervisor-chefe-section")
+                sectionSupervisorChef.hidden = false;
+            }
+
+            const otherOptions = document.querySelectorAll(".selection-section:not(#supervisor-chefe-section)")
+            otherOptions.forEach(function(element) {
+                element.hidden = true;
+            });
+        })
+        radioInputSupervisor.addEventListener("click", function() {
+            if (radioInputSupervisor.checked){
+                const sectionGerenteChef = document.getElementById("gerente-chefe-section")
+                const radioColaboradorSubordinado = document.getElementById("colaborador-subordinado-section")
+                sectionGerenteChef.hidden = false;
+                radioColaboradorSubordinado.hidden = false;
+            }
+
+            const otherOptions = document.querySelectorAll(".selection-section:not(#gerente-chefe-section):not(#colaborador-subordinado-section)")
+            otherOptions.forEach(function(element) {
+                element.hidden = true;
+            });
+        })
+        radioInputGerente.addEventListener("click", function() {
+            if (radioInputGerente.checked){
+                const sectionSupervisorSubordinado = document.getElementById("supervisor-subordinado-section")
+                sectionSupervisorSubordinado.hidden = false;
+            }
+
+            const otherOptions = document.querySelectorAll(".selection-section:not(#supervisor-subordinado-section)")
+            otherOptions.forEach(function(element) {
+                element.hidden = true;
+            });
+        })
+
+        $(document).ready(function(){
+            $('.date-input').datepicker({
+                format: 'dd/mm/yyyy',
+                language: 'pt-BR',
+                autoclose: true
+            });
+        });
+    </script>
+</body>
+</html>
