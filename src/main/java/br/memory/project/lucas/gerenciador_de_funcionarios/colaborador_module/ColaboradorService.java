@@ -7,7 +7,6 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.lang.reflect.Array;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
@@ -25,6 +24,13 @@ public class ColaboradorService implements IRepositoryMethods<Colaborador, Integ
 
     @Override
     public Colaborador save(Colaborador entity) {
+
+        if (entity.getSubordinados() != null) {
+            entity.getSubordinados().forEach(subordinado -> {
+                subordinado.setSuperiorDireto(entity);
+            });
+        }
+
         return iColaboradorRepository.save(entity);
     }
 
@@ -38,6 +44,9 @@ public class ColaboradorService implements IRepositoryMethods<Colaborador, Integ
         colaboradorInDB.setFuncaoExercida(entity.getFuncaoExercida());
         colaboradorInDB.setRemuneracao(entity.getRemuneracao());
         colaboradorInDB.setDepartamento(entity.getDepartamento());
+        colaboradorInDB.setNivelHierarquico(entity.getNivelHierarquico());
+        colaboradorInDB.setSuperiorDireto(entity.getSuperiorDireto());
+        colaboradorInDB.setSubordinados(entity.getSubordinados());
 
         return iColaboradorRepository.save(colaboradorInDB);
     }
@@ -74,7 +83,7 @@ public class ColaboradorService implements IRepositoryMethods<Colaborador, Integ
         return iColaboradorRepository.findByNivelHierarquico(nivelHierarquico);
     }
 
-    public String alternateMethodencontrarMediador(Integer id, Integer id2) throws JsonProcessingException {
+    public String encontrarMediador(Integer id, Integer id2) throws JsonProcessingException {
 
         ArrayList<Colaborador> response = new ArrayList<>();
         Colaborador colaborador0 = iColaboradorRepository.findById(id).orElse(null);
@@ -104,21 +113,11 @@ public class ColaboradorService implements IRepositoryMethods<Colaborador, Integ
                 Colaborador superiorColaborador = colaborador.getSuperiorDireto();
                 if (superiorColaborador != null) {
                     switch (superiorColaborador.getNivelHierarquico()) {
-                        case "Presidente":
-                            grausHierarquicos.add(1000);
-                            break;
-                        case "Gerente":
-                            grausHierarquicos.add(500);
-                            break;
-                        case "Supervisor":
-                            grausHierarquicos.add(250);
-                            break;
-                        case "Colaborador":
-                            grausHierarquicos.add(125);
-                            break;
-                        default:
-                            grausHierarquicos.add(0);
-                            break;
+                        case "Presidente" -> grausHierarquicos.add(1000);
+                        case "Gerente" -> grausHierarquicos.add(500);
+                        case "Supervisor" -> grausHierarquicos.add(250);
+                        case "Colaborador" -> grausHierarquicos.add(125);
+                        default -> grausHierarquicos.add(0);
                     }
                 }
                 else {
@@ -134,7 +133,6 @@ public class ColaboradorService implements IRepositoryMethods<Colaborador, Integ
 
             return jsonMapper.writeValueAsString(List.of(mapresponses));
         }
-
 
         if (grausHierarquicos.get(0).equals(grausHierarquicos.get(1))) {
 

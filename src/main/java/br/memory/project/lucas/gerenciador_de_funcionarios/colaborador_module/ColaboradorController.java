@@ -1,8 +1,6 @@
 package br.memory.project.lucas.gerenciador_de_funcionarios.colaborador_module;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.json.JsonMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -30,7 +28,7 @@ public class ColaboradorController {
     @GetMapping("/cadastro")
     public String exibirCadastroColaborador(Model model){
         model.addAttribute("colaborador", new Colaborador());
-        model.addAttribute("colaboradores", colaboradorService.findAllByNivelHierarquico("Colaborador"));
+        model.addAttribute("", colaboradorService.findAllByNivelHierarquico("Colaborador"));
         model.addAttribute("gerentes", colaboradorService.findAllByNivelHierarquico("Gerente"));
         model.addAttribute("supervisores", colaboradorService.findAllByNivelHierarquico("Supervisor"));
         model.addAttribute("isUpdate", false);
@@ -41,11 +39,11 @@ public class ColaboradorController {
     public String exibirTelaUpdateColaborador(@PathVariable Integer id, Model model) {
         Colaborador colaborador = colaboradorService.findById(id);
         model.addAttribute("colaborador", colaborador);
-        model.addAttribute("colaboradores", colaboradorService.findAllByNivelHierarquico("Colaborador"));
+        model.addAttribute("funcionariosMedios", colaboradorService.findAllByNivelHierarquico("Colaborador"));
         model.addAttribute("gerentes", colaboradorService.findAllByNivelHierarquico("Gerente"));
         model.addAttribute("supervisor", colaboradorService.findAllByNivelHierarquico("Supervisor"));
         model.addAttribute("isUpdate", true);
-        return "colaborador-views/cadastro";
+        return "colaborador-views/update";
     }
 
     @ResponseBody
@@ -97,6 +95,6 @@ public class ColaboradorController {
             @RequestParam(name = "colaborador1", required = false) Integer id,
             @RequestParam(name = "colaborador2", required = false) Integer id2) throws JsonProcessingException {
 
-        return colaboradorService.alternateMethodencontrarMediador(id, id2);
+        return colaboradorService.encontrarMediador(id, id2);
     }
 }
