@@ -10,10 +10,8 @@ import java.util.Collection;
 @Repository
 public interface IColaboradorRepository extends JpaRepository<Colaborador, Integer> {
 
-    //Collection<Colaborador> findAllByDataAdmissao(LocalDate dataAdmissao);
     Collection<Colaborador> findAllByNivelHierarquico(String nivelHierarquico);
-
-
+    Colaborador findByNivelHierarquico(String nivelHierarquico);
     @Query("from Colaborador c where year (c.dataAdmissao) = :ano")
     Collection<Colaborador> getByYear(int ano);
 }
