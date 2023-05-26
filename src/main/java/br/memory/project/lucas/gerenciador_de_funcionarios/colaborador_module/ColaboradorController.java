@@ -1,11 +1,14 @@
 package br.memory.project.lucas.gerenciador_de_funcionarios.colaborador_module;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.*;
 
 @Controller
 @RequestMapping("/colaborador")
@@ -27,9 +30,9 @@ public class ColaboradorController {
     @GetMapping("/cadastro")
     public String exibirCadastroColaborador(Model model){
         model.addAttribute("colaborador", new Colaborador());
-        model.addAttribute("colaboradores", colaboradorService.findByNivelHierarquico("Colaborador"));
-        model.addAttribute("gerentes", colaboradorService.findByNivelHierarquico("Gerente"));
-        model.addAttribute("supervisores", colaboradorService.findByNivelHierarquico("Supervisor"));
+        model.addAttribute("colaboradores", colaboradorService.findAllByNivelHierarquico("Colaborador"));
+        model.addAttribute("gerentes", colaboradorService.findAllByNivelHierarquico("Gerente"));
+        model.addAttribute("supervisores", colaboradorService.findAllByNivelHierarquico("Supervisor"));
         model.addAttribute("isUpdate", false);
         return "colaborador-views/cadastro";
     }
@@ -38,9 +41,9 @@ public class ColaboradorController {
     public String exibirTelaUpdateColaborador(@PathVariable Integer id, Model model) {
         Colaborador colaborador = colaboradorService.findById(id);
         model.addAttribute("colaborador", colaborador);
-        model.addAttribute("colaboradores", colaboradorService.findByNivelHierarquico("Colaborador"));
-        model.addAttribute("gerentes", colaboradorService.findByNivelHierarquico("Gerente"));
-        model.addAttribute("supervisor", colaboradorService.findByNivelHierarquico("Supervisor"));
+        model.addAttribute("colaboradores", colaboradorService.findAllByNivelHierarquico("Colaborador"));
+        model.addAttribute("gerentes", colaboradorService.findAllByNivelHierarquico("Gerente"));
+        model.addAttribute("supervisor", colaboradorService.findAllByNivelHierarquico("Supervisor"));
         model.addAttribute("isUpdate", true);
         return "colaborador-views/cadastro";
     }
@@ -66,8 +69,34 @@ public class ColaboradorController {
 
     @PostMapping("/lista")
     public String exibirListaColaboradoresPorAno(Model model, String ano) {
+        if (ano == null || ano.isEmpty()) {
+            return "redirect:/colaborador/lista";
+        }
         List<Colaborador> colaboradores = (List<Colaborador>) colaboradorService.findByYear(Integer.valueOf(ano));
         model.addAttribute("listaColaboradores", colaboradores);
         return "colaborador-views/listagem-colaboradores";
+    }
+
+    @GetMapping("/solucaodeconflitos")
+    public String exibirSolucaoDeConflitos(Model model) {
+        List<Colaborador> colaboradores = (List<Colaborador>) colaboradorService.findAll();
+
+        if (colaboradores.size() == 1) {
+            return "colaborador-views/resolucao-conflitos";
+        }
+        else {
+            colaboradores.remove(0);
+            model.addAttribute("listaTodosColaboradores", colaboradores);
+            return "colaborador-views/resolucao-conflitos";
+        }
+    }
+
+    @ResponseBody
+    @GetMapping("/solucaodeconflitos/solucao")
+    public String solucionarConflitos(
+            @RequestParam(name = "colaborador1", required = false) Integer id,
+            @RequestParam(name = "colaborador2", required = false) Integer id2) throws JsonProcessingException {
+
+        return colaboradorService.alternateMethodencontrarMediador(id, id2);
     }
 }
