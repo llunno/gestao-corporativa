@@ -22,7 +22,7 @@
                     <th>Departamento</th>
                     <th>Remuneração</th>
                     <th>Nível Hierárquico</th>
-                    <th>Superior</th>
+                    <th>Superior direto</th>
                     <th>Subordinados</th>
                     <th></th>
                 </tr>
@@ -38,12 +38,12 @@
                     <td th:text="${colaborador.getRemuneracao()}"></td>
                     <td th:text="${colaborador.getNivelHierarquico()}"></td>
                     <td th:if="${colaborador.superiorDireto != null}" th:text="${colaborador.getSuperiorDireto().getNome()}"></td>
-                    <td th:if="${colaborador.superiorDireto == null and colaborador.nivelHierarquico != 'Gerente'}" th:text="${'Sem superior direto'}"></td>
+                    <td th:if="${colaborador.superiorDireto == null and colaborador.nivelHierarquico != 'Gerente'}" th:text="${'-'}"></td>
                     <td>
                         <button class="btn btn-link" th:if="${colaborador.subordinados.size() > 0}" th:text="${colaborador.subordinados.size()}"
                                 data-bs-toggle="modal" th:data-bs-target="'#'+${colaborador.nome.toLowerCase().replace(' ', '')+colaborador.id+colaborador.cpf.replace('.','').replace('-','')}"></button>
 
-                        <a th:if="${colaborador.subordinados.size() <= 0}" th:text="${'Nenhum'}" disabled></a>
+                        <a th:if="${colaborador.subordinados.size() <= 0}" th:text="${'-'}" disabled></a>
                         <div class="modal fade" th:id="${colaborador.nome.toLowerCase().replace(' ', '')+colaborador.id+colaborador.cpf.replace('.','').replace('-','')}"
                              tabindex="-1" aria-labelledby="myModalLabel" aria-hidden="true">
                             <div class="modal-dialog">
@@ -69,8 +69,14 @@
                         </div>
                     </td>
                     <td class="justify-content-center align-middle gap-2">
-                        <a th:href="@{/colaborador/cadastro/{id}(id=${colaborador.getId()})}" class="text-decoration-none btn btn-primary m-0">Editar</a>
-                        <button th:data-id="${colaborador.getId()}" class="btn btn-danger m-0" onclick="deletar(this.getAttribute('data-id'))">Deletar</button>
+                        <div th:if="${colaborador.nivelHierarquico != 'Presidente'}">
+                            <a th:href="@{/colaborador/cadastro/{id}(id=${colaborador.getId()})}" class="text-decoration-none btn btn-primary m-0">Editar</a>
+                            <button th:data-id="${colaborador.getId()}" class="btn btn-danger m-0" onclick="deletar(this.getAttribute('data-id'))">Deletar</button>
+                        </div>
+                        <div th:if="${colaborador.nivelHierarquico == 'Presidente'}">
+                            <button class="text-decoration-none btn btn-primary m-0" disabled>Editar</button>
+                            <button class="btn btn-danger m-0" disabled>Deletar</button>
+                        </div>
                     </td>
                 </tr>
                 </tbody>
