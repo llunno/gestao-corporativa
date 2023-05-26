@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Resolução de Conflitos</title>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/styles.css}">
+</head>
+<body>
+    <nav th:replace="~{fragments/nav-fragment :: nav}"></nav>
+
+    <main class="d-flex flex-column justify-content-center align-items-center text-center my-4 mx-auto">
+        <h1>Resolução de conflitos</h1>
+        <h5>Selecione dois colaboradores que você deseja resolver conflitos:</h5>
+        <section class="d-flex justify-content-center align-items-center flex-wrap w-75 text-start align-self-center gap-2">
+            <div th:each="colaborador:${listaTodosColaboradores}" class="form-check div-checkbox">
+                <input type="checkbox" name="select-conflic" class="checkbox-conflict-colaboradores" th:value="${colaborador.getId()}" disabled/>
+                <p th:text="'ID: ' + ${colaborador.id}"></p>
+                <p th:text="'Nome: '+ ${colaborador.nome}"></p>
+                <p th:text="'Nível Hierárquico: ' + ${colaborador.nivelHierarquico}"></p>
+                <p th:if="${colaborador.superiorDireto != null}" th:text="'Superior direto: ' + ${colaborador.superiorDireto.nome}"></p>
+                <p th:if="${colaborador.superiorDireto == null}" th:text="'Superior direto: Não possui'"></p>
+                <p th:text="'CPF: ' + ${colaborador.cpf}"></p>
+            </div>
+        </section>
+        <div class="d-flex justify-content-center">
+            <button id="submit-conflicts-btn" class="btn btn-primary mt-4" type="submit">Resolver conflitos</button>
+        </div>
+        <section id="resultados" disabled hidden>
+            <h5 class="mt-4">Mediador Indicado:</h5>
+            <div class="d-flex flex-wrap gap-2 justify-content-center" id="resultados-div-fields">
+                <div disabled class="text-start box-colorized">
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer th:replace="~{fragments/footer-fragment :: footer}"></footer>
+
+    <script>
+        window.onload = function() {
+            controlRequest();
+        }
+
+        function generateResult(id, nome, cpf, funcao, nivelHierarquico) {
+
+            const divResultados = document.querySelector("#resultados-div-fields");
+
+            if (id == null) {
+                const pId = document.createElement("p");
+                pId.innerText = "Não foi encontrado um mediador em comum";
+                divResultados.appendChild(pId);
+                return;
+            }
+
+            const divResultIndividual = document.createElement("div");
+            divResultIndividual.classList.add("text-start", "box-colorized");
+            divResultIndividual.setAttribute("disabled", "true");
+
+            divResultados.appendChild(divResultIndividual);
+
+            const pId = document.createElement("p");
+            const pNome = document.createElement("p");
+            const pCPF = document.createElement("p");
+            const pFuncao = document.createElement("p");
+            const pNivelHierarquico = document.createElement("p");
+
+            divResultIndividual.appendChild(pId);
+            divResultIndividual.appendChild(pNome);
+            divResultIndividual.appendChild(pCPF);
+            divResultIndividual.appendChild(pFuncao);
+            divResultIndividual.appendChild(pNivelHierarquico);
+
+            pId.innerText = "ID: " + id;
+            pNome.innerText = "Nome: " + nome;
+            pCPF.innerText = "CPF: " + cpf;
+            pFuncao.innerText = "Função: " + funcao;
+            pNivelHierarquico.innerText = "Nível Hierárquico: " + nivelHierarquico;
+        }
+
+        let colaboradoresSelecionados = []
+        function controlRequest() {
+
+            const checkboxDivs = document.querySelectorAll(".div-checkbox")
+            checkboxDivs.forEach(function(element) {
+                element.addEventListener("click", function () {
+                    const checkbox = element.querySelector("input[type=checkbox]");
+
+                    if (colaboradoresSelecionados.length < 2) {
+                        if (checkbox.checked) {
+                            colaboradoresSelecionados.reverse().pop()
+
+                            checkbox.checked = !checkbox.checked;
+                            element.classList.toggle("div-checkbox-selected");
+
+                        } else {
+                            checkbox.checked = !checkbox.checked;
+                            element.classList.toggle("div-checkbox-selected");
+                            colaboradoresSelecionados.push(checkbox.value)
+                            console.log("Marcou!: Quantidades marcadas na lista = " + colaboradoresSelecionados.length)
+                        }
+                    } else {
+                        if (checkbox.checked) {
+                            checkbox.checked = !checkbox.checked;
+                            element.classList.toggle("div-checkbox-selected");
+                            let indexOfThisCheckbox = colaboradoresSelecionados.indexOf(checkbox.value)
+                            colaboradoresSelecionados.splice(indexOfThisCheckbox, 1)
+                        }
+                    }
+                })
+            })
+        }
+
+        const submitBtn = document.querySelector("#submit-conflicts-btn");
+        submitBtn.addEventListener("click", function(event) {
+            event.preventDefault();
+            const checkboxes = document.querySelectorAll('.checkbox-conflict-colaboradores:checked');
+            const ids = [];
+            checkboxes.forEach(function(element) {
+                ids.push(element.value);
+            });
+
+            const divResultados = document.querySelector("#resultados-div-fields");
+
+            const url = `/colaborador/solucaodeconflitos/solucao?colaborador1=${ids[0]}&colaborador2=${ids[1]}`;
+            fetch(url)
+                .then(function(response) {
+                    return response.json();
+                })
+                .then(function(json) {
+                    divResultados.innerHTML = "";
+                    json.forEach(function(indicado) {
+                        generateResult(
+                            indicado.id,
+                            indicado.nome,
+                            indicado.cpf,
+                            indicado.funcaoExercida,
+                            indicado.nivelHierarquico
+                        );
+                    })
+                    const superiorIndicadoDiv = document.querySelector("#resultados");
+                    superiorIndicadoDiv.hidden = false;
+                });
+        });
+    </script>
+</body>
+</html>

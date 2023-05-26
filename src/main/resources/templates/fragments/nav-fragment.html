@@ -6,12 +6,15 @@
   <div class="collapse navbar-collapse" id="navbarColor01">
     <ul class="navbar-nav mr-auto">
       <li class="nav-item">
-        <a class="nav-link" th:href="@{/colaborador/lista}">Colaboradores</a>
+        <a class="nav-link" th:href="@{/colaborador/lista}">Listagem de Colaboradores</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" th:href="@{/colaborador/solucaodeconflitos}">Resolução de conflitos</a>
       </li>
     </ul>
   </div>
   <form th:action="@{/colaborador/lista}" th:method="POST" class="d-flex me-4" role="search">
-    <input class="form-control me-2" name="ano" type="text" placeholder="Insira um ano..." aria-label="Search">
+    <input class="form-control me-2" name="ano" type="text" placeholder="Insira um ano para filtrar..." aria-label="Search">
     <button class="btn btn-light" type="submit">Pesquisar</button>
   </form>
 </nav>
