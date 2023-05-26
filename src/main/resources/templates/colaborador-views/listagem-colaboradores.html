@@ -39,7 +39,6 @@
                     <td th:text="${colaborador.getNivelHierarquico()}"></td>
                     <td th:if="${colaborador.superiorDireto != null}" th:text="${colaborador.getSuperiorDireto().getNome()}"></td>
                     <td th:if="${colaborador.superiorDireto == null and colaborador.nivelHierarquico != 'Gerente'}" th:text="${'Sem superior direto'}"></td>
-                    <td th:if="${colaborador.nivelHierarquico == 'Gerente'}" th:text="${'Presidente'}"></td>
                     <td>
                         <button class="btn btn-link" th:if="${colaborador.subordinados.size() > 0}" th:text="${colaborador.subordinados.size()}"
                                 data-bs-toggle="modal" th:data-bs-target="'#'+${colaborador.nome.toLowerCase().replace(' ', '')+colaborador.id+colaborador.cpf.replace('.','').replace('-','')}"></button>
@@ -55,7 +54,7 @@
                                     </div>
                                     <div class="modal-body">
                                         <div class="container-boxes d-flex justify-content-start gap-2">
-                                            <div th:each="subordinado:${colaborador.subordinados}" class="form-check div-checkbox">
+                                            <div th:each="subordinado:${colaborador.subordinados}" class="form-check div-checkbox box-colorized">
                                                 <p th:text="'ID: ' + ${subordinado.id}"></p>
                                                 <p th:text="'Nome: '+ ${subordinado.nome}"></p>
                                                 <p th:text="'CPF: ' + ${subordinado.cpf}"></p>

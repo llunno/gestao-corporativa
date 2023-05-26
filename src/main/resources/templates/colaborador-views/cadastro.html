@@ -21,8 +21,9 @@
                         Gerente
                     </label>
                 </div>
-                <section class="overflow-auto selection-section" hidden>
-                    <p class="mt-2"  th:value="${1}" th:field="*{superiorDireto}">Todos os gerentes são subordinados diretamente ao presidente</p>
+                <section class="overflow-auto selection-section">
+                    <p class="mt-2"  th:value="${1}" th:field="*{superiorDireto}" hidden>Todos os gerentes são subordinados diretamente ao presidente</p>
+                    <input type="checkbox" id="president-checkbox" name="presidente-superior" th:value="${1000}" th:field="*{superiorDireto}" hidden>
                 </section>
                 <section id="supervisor-subordinado-section" class="overflow-auto selection-section" hidden>
                     <p class="mt-2">Selecione os supervisores subordinados a este gerente, caso haja algum:</p>
@@ -182,6 +183,7 @@
             if (radioInputColaborador.checked){
                 const sectionSupervisorChef = document.getElementById("supervisor-chefe-section")
                 sectionSupervisorChef.hidden = false;
+                document.querySelector("#president-checkbox").checked = false;
             }
 
             const otherOptions = document.querySelectorAll(".selection-section:not(#supervisor-chefe-section)")
@@ -195,6 +197,7 @@
                 const radioColaboradorSubordinado = document.getElementById("colaborador-subordinado-section")
                 sectionGerenteChef.hidden = false;
                 radioColaboradorSubordinado.hidden = false;
+                document.querySelector("#president-checkbox").checked = false;
             }
 
             const otherOptions = document.querySelectorAll(".selection-section:not(#gerente-chefe-section):not(#colaborador-subordinado-section)")
@@ -206,6 +209,7 @@
             if (radioInputGerente.checked){
                 const sectionSupervisorSubordinado = document.getElementById("supervisor-subordinado-section")
                 sectionSupervisorSubordinado.hidden = false;
+                document.querySelector("#president-checkbox").checked = true;
             }
 
             const otherOptions = document.querySelectorAll(".selection-section:not(#supervisor-subordinado-section)")
