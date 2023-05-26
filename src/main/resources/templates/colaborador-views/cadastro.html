@@ -21,15 +21,15 @@
                         Gerente
                     </label>
                 </div>
-                <section class="overflow-auto selection-section">
-                    <p class="mt-2"  th:value="${1}" th:field="*{superiorDireto}" hidden>Todos os gerentes são subordinados diretamente ao presidente</p>
+                <section class="overflow-auto selection-section selection-gerente">
+                    <p class="mt-2" hidden>Todos os gerentes são subordinados diretamente ao presidente</p>
                     <input type="checkbox" id="president-checkbox" name="presidente-superior" th:value="${1000}" th:field="*{superiorDireto}" hidden>
                 </section>
-                <section id="supervisor-subordinado-section" class="overflow-auto selection-section" hidden>
+                <section id="supervisor-subordinado-section" class="overflow-auto selection-section selection-gerente" hidden>
                     <p class="mt-2">Selecione os supervisores subordinados a este gerente, caso haja algum:</p>
                     <div  class="container-boxes d-flex justify-content-start gap-2">
                         <div th:each="supervisor:${supervisores}" th:if="${supervisor.superiorDireto == null}" class="div-checkbox form-check">
-                            <input type="checkbox" name="supervisor-subordinado" th:value="${supervisor.getId()}" th:field="*{subordinados}"/>
+                            <input type="checkbox" name="subordinados" th:value="${supervisor.getId()}" th:field="*{subordinados}" class="checkbox-input"/>
                             <p th:text="'ID: ' + ${supervisor.getId()}"></p>
                             <p th:text="'Nome: ' + ${supervisor.getNome()}"></p>
                             <p th:text="'CPF: ' + ${supervisor.getCpf()}"></p>
@@ -46,11 +46,11 @@
                         Supervisor
                     </label>
                 </div>
-                <section id="gerente-chefe-section" class="overflow-auto selection-section" hidden>
+                <section id="gerente-chefe-section" class="overflow-auto selection-section d-none selection-supervisor">
                     <p class="mt-2">Selecione o gerente deste supervisor, caso haja algum:</p>
                     <div  class="container-boxes d-flex justify-content-start gap-2">
                         <div th:each="gerente:${gerentes}" class="div-radio div-radio-gerente form-check">
-                            <input type="radio" name="gerente-chefe" th:value="${gerente.getId()}" th:field="*{superiorDireto}"/>
+                            <input type="radio" name="gerente-chefe" th:value="${gerente.getId()}" th:field="*{superiorDireto}" class="radio-input" />
                             <p th:text="'ID: ' + ${gerente.getId()}"></p>
                             <p th:text="'Nome: ' + ${gerente.getNome()}"></p>
                             <p th:text="'CPF: ' + ${gerente.getCpf()}"></p>
@@ -58,15 +58,15 @@
                         </div>
                     </div>
                 </section>
-                <section id="colaborador-subordinado-section" class="overflow-auto selection-section" hidden>
+                <section id="colaborador-subordinado-section" class="overflow-auto selection-section d-none selection-supervisor">
                     <p class="mt-2">Selecione os subordinados deste colaborador, caso haja algum:</p>
                     <div  class="container-boxes d-flex justify-content-start gap-2">
-                        <div th:each="colaborador:${colaboradores}" th:if="${colaborador.superiorDireto == null}" class="div-checkbox form-check">
-                            <input type="checkbox" name="colaborador-subordinado" th:value="${colaborador.getId()}" th:field="*{subordinados}"/>
-                            <p th:text="'ID: ' + ${colaborador.getId()}"></p>
-                            <p th:text="'Nome: ' + ${colaborador.getNome()}"></p>
-                            <p th:text="'CPF: ' + ${colaborador.getCpf()}"></p>
-                            <p th:text="'Nível Hierárquerico: ' + ${colaborador.getNivelHierarquico()}"></p>
+                        <div th:each="funcionario:${funcionariosMedios}" th:if="${funcionario.superiorDireto == null}" class="div-checkbox form-check checkbox-input">
+                            <input type="checkbox" name="subordinados" th:value="${funcionario.getId()}"  th:field="*{subordinados}" class="checkbox-input"/>
+                            <p th:text="'ID: ' + ${funcionario.getId()}"></p>
+                            <p th:text="'Nome: ' + ${funcionario.getNome()}"></p>
+                            <p th:text="'CPF: ' + ${funcionario.getCpf()}"></p>
+                            <p th:text="'Nível Hierárquerico: ' + ${funcionario.getNivelHierarquico()}"></p>
                         </div>
                     </div>
                 </section>
@@ -79,11 +79,11 @@
                         Colaborador
                     </label>
                 </div>
-                <section id="supervisor-chefe-section" class="overflow-auto selection-section" hidden>
+                <section id="supervisor-chefe-section" class="overflow-auto selection-section d-none selection-colaborador">
                     <p class="mt-2">Selecione o supervisor deste colaborador, caso haja algum:</p>
                     <div  class="container-boxes d-flex justify-content-start gap-2">
                         <div th:each="supervisor:${supervisores}" class="div-radio div-radio-supervisor form-check">
-                            <input type="radio" name="supervisor-chefe" th:value="${supervisor.getId()}" th:field="*{superiorDireto}"/>
+                            <input type="radio" name="supervisor-chefe" th:value="${supervisor.getId()}" th:field="*{superiorDireto}" class="radio-input"/>
                             <p th:text="'ID: ' + ${supervisor.getId()}"></p>
                             <p th:text="'Nome: ' + ${supervisor.getNome()}"></p>
                             <p th:text="'CPF: ' + ${supervisor.getCpf()}"></p>
@@ -94,11 +94,6 @@
             </section>
 
             <button type="submit" class="btn btn-primary my-3">Cadastrar</button>
-        </form>
-        <form th:if="${isUpdate}" th:object="${colaborador}" th:action="@{/colaborador/update/{id}(id=${colaborador.getId()})}" th:method="PUT">
-            <div th:replace="~{fragments/common-form-fields :: common-form}"></div>
-
-            <button type="submit" class="btn btn-primary my-3">Atualizar</button>
         </form>
     </div>
 
@@ -124,99 +119,28 @@
             }
         }
 
-        const checkboxDivs = document.querySelectorAll(".div-checkbox")
-        checkboxDivs.forEach(function(element) {
-            element.addEventListener("click", function() {
-                const checkbox = element.querySelector("input[type=checkbox]");
-
-                checkbox.checked = !checkbox.checked;
-                element.classList.toggle("div-checkbox-selected");
-
-            });
-        });
-
-        const radioDivsSupervisor = document.querySelectorAll(".div-radio-supervisor")
-        radioDivsSupervisor.forEach(function(selected) {
-            selected.addEventListener("click", function() {
-                const radio = selected.querySelector("input[type=radio]");
-                radio.checked = true;
-                if (!selected.classList.contains("div-checkbox-selected")){
-                    selected.classList.add("div-checkbox-selected");
-                }
-
-                if(radio.checked){
-                    console.log("checked")
-                }
-
-                radioDivsSupervisor.forEach(function(nonSelected) {
-                    if(nonSelected !== selected){
-                        const radio = nonSelected.querySelector("input[type=radio]");
-                        radio.checked = false;
-                        nonSelected.classList.remove("div-checkbox-selected");
-                    }
-                });
-            });
-        });
-
-        const radioDivsGerente = document.querySelectorAll(".div-radio-gerente")
-        radioDivsGerente.forEach(function(selected) {
-            selected.addEventListener("click", function() {
-                const radio = selected.querySelector("input[type=radio]");
-                radio.checked = true;
-                selected.classList.toggle("div-checkbox-selected");
-
-                radioDivsGerente.forEach(function(nonSelected) {
-                    if(nonSelected !== selected){
-                        const radio = nonSelected.querySelector("input[type=radio]");
-                        radio.checked = false;
-                        nonSelected.classList.remove("div-checkbox-selected");
-                    }
-                });
-            });
-        });
-
         const radioInputColaborador = document.getElementById("colaborador")
         const radioInputSupervisor = document.getElementById("supervisor")
         const radioInputGerente = document.getElementById("gerente")
 
-        radioInputColaborador.addEventListener("click", function(){
-            if (radioInputColaborador.checked){
-                const sectionSupervisorChef = document.getElementById("supervisor-chefe-section")
-                sectionSupervisorChef.hidden = false;
-                document.querySelector("#president-checkbox").checked = false;
-            }
-
-            const otherOptions = document.querySelectorAll(".selection-section:not(#supervisor-chefe-section)")
-            otherOptions.forEach(function(element) {
-                element.hidden = true;
-            });
+        radioInputColaborador.addEventListener("click", function () {
+            document.querySelectorAll(".selection-colaborador").forEach(element => element.classList.remove("d-none"))
+            document.querySelectorAll(".selection-gerente").forEach(element => element.classList.add("d-none"))
+            document.querySelectorAll(".selection-supervisor").forEach(element => element.classList.add("d-none"))
         })
-        radioInputSupervisor.addEventListener("click", function() {
-            if (radioInputSupervisor.checked){
-                const sectionGerenteChef = document.getElementById("gerente-chefe-section")
-                const radioColaboradorSubordinado = document.getElementById("colaborador-subordinado-section")
-                sectionGerenteChef.hidden = false;
-                radioColaboradorSubordinado.hidden = false;
-                document.querySelector("#president-checkbox").checked = false;
-            }
 
-            const otherOptions = document.querySelectorAll(".selection-section:not(#gerente-chefe-section):not(#colaborador-subordinado-section)")
-            otherOptions.forEach(function(element) {
-                element.hidden = true;
-            });
+        radioInputSupervisor.addEventListener("click", function () {
+            document.querySelectorAll(".selection-colaborador").forEach(element => element.classList.add("d-none"))
+            document.querySelectorAll(".selection-gerente").forEach(element => element.classList.add("d-none"))
+            document.querySelectorAll(".selection-supervisor").forEach(element => element.classList.remove("d-none"))
         })
-        radioInputGerente.addEventListener("click", function() {
-            if (radioInputGerente.checked){
-                const sectionSupervisorSubordinado = document.getElementById("supervisor-subordinado-section")
-                sectionSupervisorSubordinado.hidden = false;
-                document.querySelector("#president-checkbox").checked = true;
-            }
 
-            const otherOptions = document.querySelectorAll(".selection-section:not(#supervisor-subordinado-section)")
-            otherOptions.forEach(function(element) {
-                element.hidden = true;
-            });
+        radioInputGerente.addEventListener("click", function () {
+            document.querySelectorAll(".selection-colaborador").forEach(element => element.classList.add("d-none"))
+            document.querySelectorAll(".selection-gerente").forEach(element => element.classList.remove("d-none"))
+            document.querySelectorAll(".selection-supervisor").forEach(element => element.classList.add("d-none"))
         })
+
 
         $(document).ready(function(){
             $('.date-input').datepicker({
@@ -225,6 +149,31 @@
                 autoclose: true
             });
         });
+
+
+        const checkboxDivs = document.querySelectorAll(".div-checkbox")
+        checkboxDivs.forEach(function(element) {
+            element.addEventListener("click", function () {
+                const checkbox = element.querySelector("input[type=checkbox]");
+                checkbox.checked = true;
+                element.classList.toggle("div-checkbox-selected");
+            })
+        })
+
+        const radioDivs = document.querySelectorAll(".div-radio")
+        radioDivs.forEach(function(element) {
+            const radio = element.querySelector("input[type=radio]");
+
+            element.addEventListener("click", function () {
+
+                radioDivs.forEach(function(element) {
+                    element.classList.remove("div-radio-selected");
+                    radio.checked = false;
+                })
+                element.classList.toggle("div-radio-selected");
+                radio.checked = true;
+            })
+        })
     </script>
 </body>
 </html>
