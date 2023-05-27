@@ -32,13 +32,13 @@
                     <td th:text="${colaborador.getId()}"></td>
                     <td th:text="${colaborador.getNome()}"></td>
                     <td th:text="${colaborador.getCpf()}"></td>
-                    <td th:text="${colaborador.getDataAdmissao()}"></td>
+                    <td th:text="${colaborador.formattedDataAdmissao()}"></td>
                     <td th:text="${colaborador.getFuncaoExercida()}"></td>
                     <td th:text="${colaborador.getDepartamento()}"></td>
-                    <td th:text="${colaborador.getRemuneracao()}"></td>
+                    <td th:text="${colaborador.formattedRemuneracao()}"></td>
                     <td th:text="${colaborador.getNivelHierarquico()}"></td>
                     <td th:if="${colaborador.superiorDireto != null}" th:text="${colaborador.getSuperiorDireto().getNome()}"></td>
-                    <td th:if="${colaborador.superiorDireto == null and colaborador.nivelHierarquico != 'Gerente'}" th:text="${'-'}"></td>
+                    <td th:if="${colaborador.superiorDireto == null}" th:text="${'-'}"></td>
                     <td>
                         <button class="btn btn-link" th:if="${colaborador.subordinados.size() > 0}" th:text="${colaborador.subordinados.size()}"
                                 data-bs-toggle="modal" th:data-bs-target="'#'+${colaborador.nome.toLowerCase().replace(' ', '')+colaborador.id+colaborador.cpf.replace('.','').replace('-','')}"></button>
