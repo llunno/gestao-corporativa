@@ -1,14 +1,22 @@
 package br.memory.project.lucas.gerenciador_de_funcionarios.colaborador_module;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import java.text.NumberFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Collection;
+import java.util.Locale;
 
+@Setter
+@Getter
+@NoArgsConstructor
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 public class Colaborador {
@@ -35,54 +43,22 @@ public class Colaborador {
     @OneToMany(mappedBy = "superiorDireto", cascade = CascadeType.DETACH, fetch = FetchType.EAGER)
     private Collection<Colaborador> subordinados;
 
-    public Colaborador(){}
-    public Integer getId() {
-        return id;
-    }
-
-    public String getNome() {
-        return nome;
-    }
-
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-
-    public String getCpf() {
-        return cpf;
-    }
-
-    public void setCpf(String cpf) {
-        this.cpf = cpf;
-    }
-
-    public LocalDate getDataAdmissao() {
-        return dataAdmissao;
-    }
-
-    public void setDataAdmissao(LocalDate dataAdmissao) {
-        this.dataAdmissao = dataAdmissao;
-    }
-
-    public String getFuncaoExercida() {
-        return funcaoExercida;
-    }
-
-    public void setFuncaoExercida(String funcaoExercida) {
-        this.funcaoExercida = funcaoExercida;
-    }
-
-    public Double getRemuneracao() {
-        return remuneracao;
-    }
-
-    public void setRemuneracao(Double remuneracao) {
-        this.remuneracao = remuneracao;
-    }
-
-    public LocalDate convertDataAdmissao(String dataAdmissao){
+    public String formattedDataAdmissao(){
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-        return LocalDate.parse(dataAdmissao, formatter);
+        return this.dataAdmissao.format(formatter);
+    }
+
+    public String formattedRemuneracao() {
+        try{
+            NumberFormat nf = NumberFormat.getCurrencyInstance(Locale.forLanguageTag("pt-BR"));
+            return nf.format(this.remuneracao);
+        } catch (NullPointerException e) {
+            Locale.Builder localeBuilder = new Locale.Builder();
+            localeBuilder.setLanguage("pt");
+            localeBuilder.setRegion("BR");
+            NumberFormat nf = NumberFormat.getCurrencyInstance(localeBuilder.build());
+            return nf.format(this.remuneracao);
+        }
     }
 
     @Override
@@ -94,40 +70,10 @@ public class Colaborador {
                 ", dataAdmissao=" + dataAdmissao +
                 ", funcaoExercida='" + funcaoExercida + '\'' +
                 ", remuneracao=" + remuneracao +
+                ", departamento='" + departamento + '\'' +
                 ", nivelHierarquico='" + nivelHierarquico + '\'' +
-                ", superiorDireto=" + superiorDireto +
+                ", superiorDireto=" + (superiorDireto == null ? null : superiorDireto.getNome()) +
+                ", subordinados=" + (subordinados == null ? null : subordinados.size()) +
                 '}';
-    }
-
-    public String getNivelHierarquico() {
-        return nivelHierarquico;
-    }
-
-    public void setNivelHierarquico(String nivelHierarquico) {
-        this.nivelHierarquico = nivelHierarquico;
-    }
-
-    public Colaborador getSuperiorDireto() {
-        return superiorDireto;
-    }
-
-    public void setSuperiorDireto(Colaborador superiorDireto) {
-        this.superiorDireto = superiorDireto;
-    }
-
-    public String getDepartamento() {
-        return departamento;
-    }
-
-    public void setDepartamento(String departamento) {
-        this.departamento = departamento;
-    }
-
-    public Collection<Colaborador> getSubordinados() {
-        return subordinados;
-    }
-
-    public void setSubordinados(Collection<Colaborador> subordinados) {
-        this.subordinados = subordinados;
     }
 }
