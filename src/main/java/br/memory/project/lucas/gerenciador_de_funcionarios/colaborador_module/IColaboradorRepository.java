@@ -14,4 +14,5 @@ public interface IColaboradorRepository extends JpaRepository<Colaborador, Integ
     Colaborador findByNivelHierarquico(String nivelHierarquico);
     @Query("from Colaborador c where year (c.dataAdmissao) = :ano")
     Collection<Colaborador> getByYear(int ano);
+    Collection<Colaborador> findAllByOrderByIdDesc();
 }

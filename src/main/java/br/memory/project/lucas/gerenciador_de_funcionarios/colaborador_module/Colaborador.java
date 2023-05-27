@@ -30,13 +30,12 @@ public class Colaborador {
     private Double remuneracao;
     private String departamento;
     private String nivelHierarquico;
-    @ManyToOne(cascade = CascadeType.DETACH, fetch = FetchType.EAGER)
+    @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.PERSIST}, fetch = FetchType.EAGER)
     private Colaborador superiorDireto;
     @OneToMany(mappedBy = "superiorDireto", cascade = CascadeType.DETACH, fetch = FetchType.EAGER)
     private Collection<Colaborador> subordinados;
 
     public Colaborador(){}
-
     public Integer getId() {
         return id;
     }
