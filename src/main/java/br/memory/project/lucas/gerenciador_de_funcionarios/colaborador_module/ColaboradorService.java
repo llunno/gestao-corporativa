@@ -119,6 +119,8 @@ public class ColaboradorService implements IRepositoryMethods<Colaborador, Integ
     public String encontrarMediador(Integer id, Integer id2) throws JsonProcessingException {
 
         ArrayList<Colaborador> response = new ArrayList<>();
+        ArrayList<ColaboradorDTO> superioresIndicadosDTO = new ArrayList<>();
+
         Colaborador colaborador0 = iColaboradorRepository.findById(id).orElse(null);
         Colaborador colaborador1 = iColaboradorRepository.findById(id2).orElse(null);
         Colaborador presidente = iColaboradorRepository.findByNivelHierarquico("Presidente");
@@ -135,6 +137,14 @@ public class ColaboradorService implements IRepositoryMethods<Colaborador, Integ
             Objects.requireNonNull(colaborador1);
         } catch (NullPointerException e) {
             return jsonMapper.writeValueAsString(List.of(mapresponses));
+        }
+
+        if (colaborador0.getNivelHierarquico().equals("Presidente")
+                || colaborador1.getNivelHierarquico().equals("Presidente")) {
+
+            ColaboradorDTO presidenteDTO = modelMapper.colaboradorToColaboradorDTO(presidente);
+            superioresIndicadosDTO.add(presidenteDTO);
+            return jsonMapper.writeValueAsString(superioresIndicadosDTO);
         }
 
         List<Integer> grausHierarquicos = new ArrayList<>();
@@ -184,7 +194,6 @@ public class ColaboradorService implements IRepositoryMethods<Colaborador, Integ
             response.add(colaborador1.getSuperiorDireto());
         }
 
-        ArrayList<ColaboradorDTO> superioresIndicadosDTO = new ArrayList<>();
         for (Colaborador superiorIndicado : response) {
             ColaboradorDTO superiorIndicadoDTO = modelMapper.colaboradorToColaboradorDTO(superiorIndicado);
             superioresIndicadosDTO.add(superiorIndicadoDTO);
