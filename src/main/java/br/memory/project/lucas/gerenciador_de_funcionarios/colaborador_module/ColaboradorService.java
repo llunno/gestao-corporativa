@@ -25,6 +25,10 @@ public class ColaboradorService implements IRepositoryMethods<Colaborador, Integ
     @Override
     public Colaborador save(Colaborador entity) {
 
+        if (entity.getNivelHierarquico().equals("Gerente")) {
+            entity.setSuperiorDireto(iColaboradorRepository.findByNivelHierarquico("Presidente"));
+        }
+
         if (entity.getSubordinados() != null) {
             entity.getSubordinados().forEach(subordinado -> {
                 subordinado.setSuperiorDireto(entity);
@@ -45,6 +49,25 @@ public class ColaboradorService implements IRepositoryMethods<Colaborador, Integ
         colaboradorInDB.setRemuneracao(entity.getRemuneracao());
         colaboradorInDB.setDepartamento(entity.getDepartamento());
         colaboradorInDB.setNivelHierarquico(entity.getNivelHierarquico());
+
+
+
+        if (entity.getSubordinados() != null && entity.getSubordinados().size() != 0) {
+
+            colaboradorInDB.getSubordinados().forEach(subordinado -> {
+                subordinado.setSuperiorDireto(null);
+            });
+
+            entity.getSubordinados().forEach(subordinado -> {
+                subordinado.setSuperiorDireto(colaboradorInDB);
+            });
+        } else {
+            colaboradorInDB.getSubordinados().forEach(subordinado -> {
+                subordinado.setSuperiorDireto(null);
+            });
+        }
+
+
         colaboradorInDB.setSuperiorDireto(entity.getSuperiorDireto());
         colaboradorInDB.setSubordinados(entity.getSubordinados());
 
@@ -53,6 +76,12 @@ public class ColaboradorService implements IRepositoryMethods<Colaborador, Integ
 
     @Override
     public void delete(Integer id) {
+
+        iColaboradorRepository.findById(id).ifPresent(colaborador ->
+            colaborador.getSubordinados().forEach(subordinado -> {
+            subordinado.setSuperiorDireto(null);
+        }));
+
         iColaboradorRepository.deleteById(id);
     }
 
@@ -69,6 +98,10 @@ public class ColaboradorService implements IRepositoryMethods<Colaborador, Integ
     @Override
     public Collection<Colaborador> findByYear(Integer year) {
         return iColaboradorRepository.getByYear(year);
+    }
+
+    public Collection<Colaborador> findAllByIdOrdered() {
+        return iColaboradorRepository.findAllByOrderByIdDesc();
     }
 
     public String formatData(String data) {
