@@ -28,7 +28,7 @@ public class ColaboradorController {
     @GetMapping("/cadastro")
     public String exibirCadastroColaborador(Model model){
         model.addAttribute("colaborador", new Colaborador());
-        model.addAttribute("", colaboradorService.findAllByNivelHierarquico("Colaborador"));
+        model.addAttribute("funcionariosMedios", colaboradorService.findAllByNivelHierarquico("Colaborador"));
         model.addAttribute("gerentes", colaboradorService.findAllByNivelHierarquico("Gerente"));
         model.addAttribute("supervisores", colaboradorService.findAllByNivelHierarquico("Supervisor"));
         model.addAttribute("isUpdate", false);
@@ -41,7 +41,7 @@ public class ColaboradorController {
         model.addAttribute("colaborador", colaborador);
         model.addAttribute("funcionariosMedios", colaboradorService.findAllByNivelHierarquico("Colaborador"));
         model.addAttribute("gerentes", colaboradorService.findAllByNivelHierarquico("Gerente"));
-        model.addAttribute("supervisor", colaboradorService.findAllByNivelHierarquico("Supervisor"));
+        model.addAttribute("supervisores", colaboradorService.findAllByNivelHierarquico("Supervisor"));
         model.addAttribute("isUpdate", true);
         return "colaborador-views/update";
     }
@@ -49,6 +49,7 @@ public class ColaboradorController {
     @ResponseBody
     @DeleteMapping("/delete/{id}")
     public void deletarColaborador(@PathVariable Integer id){
+
         colaboradorService.delete(id);
     }
 
@@ -60,7 +61,7 @@ public class ColaboradorController {
 
     @GetMapping("/lista")
     public String exibirListaColaboradores(Model model) {
-        List<Colaborador> colaboradores = (List<Colaborador>) colaboradorService.findAll();
+        List<Colaborador> colaboradores = (List<Colaborador>) colaboradorService.findAllByIdOrdered();
         model.addAttribute("listaColaboradores", colaboradores);
         return "colaborador-views/listagem-colaboradores";
     }
@@ -77,7 +78,7 @@ public class ColaboradorController {
 
     @GetMapping("/solucaodeconflitos")
     public String exibirSolucaoDeConflitos(Model model) {
-        List<Colaborador> colaboradores = (List<Colaborador>) colaboradorService.findAll();
+        List<Colaborador> colaboradores = (List<Colaborador>) colaboradorService.findAllByIdOrdered();
 
         if (colaboradores.size() == 1) {
             return "colaborador-views/resolucao-conflitos";
