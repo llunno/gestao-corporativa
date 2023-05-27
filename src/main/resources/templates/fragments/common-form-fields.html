@@ -17,10 +17,64 @@
   </div>
   <div class="form-group">
     <label>Remuneração:</label>
-    <input type="number" class="form-control" th:field="*{remuneracao}" required="required" />
+    <input type="text" class="form-control input-remuneracao" th:field="*{remuneracao}" required="required" />
   </div>
   <div class="form-group">
     <label>Departamento:</label>
     <input type="text" class="form-control" th:field="*{departamento}" required="required" />
   </div>
 </div>
+
+<section th:fragment="colaborador-form-field" id="supervisor-chefe-section" class="overflow-auto selection-section selection-colaborador">
+  <p class="mt-2">Altere o supervisor deste colaborador caso deseje:</p>
+  <div  class="container-boxes d-flex justify-content-start gap-2">
+    <div th:each="supervisor:${supervisores}" class="div-radio div-radio-supervisor form-check">
+      <input type="checkbox" name="supervisor-chefe" th:value="${supervisor.getId()}" th:field="*{superiorDireto}" class="radio-input"/>
+      <p th:text="'ID: ' + ${supervisor.getId()}"></p>
+      <p th:text="'Nome: ' + ${supervisor.getNome()}"></p>
+      <p th:text="'CPF: ' + ${supervisor.getCpf()}"></p>
+      <p th:text="'Nível Hierárquerico: ' + ${supervisor.getNivelHierarquico()}"></p>
+    </div>
+  </div>
+</section>
+
+<section th:fragment="supervisor-form-fields">
+  <section id="gerente-chefe-ection" class="overflow-auto selection-section selection-supervisor">
+    <p class="mt-2">Selecione o gerente deste supervisor, caso haja algum:</p>
+    <div  class="container-boxes d-flex justify-content-start gap-2">
+      <div th:each="gerente:${gerentes}" class="div-radio div-radio-gerente form-check">
+        <input type="checkbox" name="gerente-chefe" th:value="${gerente.getId()}" th:field="*{superiorDireto}" class="radio-input" />
+        <p th:text="'ID: ' + ${gerente.getId()}"></p>
+        <p th:text="'Nome: ' + ${gerente.getNome()}"></p>
+        <p th:text="'CPF: ' + ${gerente.getCpf()}"></p>
+        <p th:text="'Nível Hierárquerico: ' + ${gerente.getNivelHierarquico()}"></p>
+      </div>
+    </div>
+  </section>
+  <section id="colaborador-subordinado-section" class="overflow-auto selection-section selection-supervisor">
+    <p class="mt-2">Selecione os subordinados deste colaborador, caso haja algum:</p>
+    <div  class="container-boxes d-flex justify-content-start gap-2">
+      <div th:each="funcionario:${funcionariosMedios}" th:if="${funcionario.superiorDireto == null}" class="div-checkbox form-check checkbox-input">
+        <input type="checkbox" name="subordinados" th:value="${funcionario.getId()}"  th:field="*{subordinados}" class="checkbox-input"/>
+        <p th:text="'ID: ' + ${funcionario.getId()}"></p>
+        <p th:text="'Nome: ' + ${funcionario.getNome()}"></p>
+        <p th:text="'CPF: ' + ${funcionario.getCpf()}"></p>
+        <p th:text="'Nível Hierárquerico: ' + ${funcionario.getNivelHierarquico()}"></p>
+      </div>
+    </div>
+  </section>
+</section>
+
+<section th:fragment="gerente-form-field" id="supervisor-subordinado-section" class="overflow-auto selection-section selection-gerente">
+  <p class="mt-2">Selecione os supervisores subordinados a este gerente, caso haja algum:</p>
+  <div  class="container-boxes d-flex justify-content-start gap-2">
+    <div th:each="supervisor:${supervisores}" class="div-checkbox form-check">
+      <input type="checkbox" name="subordinados" th:value="${supervisor.getId()}" th:field="*{subordinados}" class="checkbox-input"/>
+      <p th:text="'ID: ' + ${supervisor.getId()}"></p>
+      <p th:text="'Nome: ' + ${supervisor.getNome()}"></p>
+      <p th:text="'CPF: ' + ${supervisor.getCpf()}"></p>
+      <p th:text="'Nível Hierárquerico: ' + ${supervisor.getNivelHierarquico()}"></p>
+    </div>
+  </div>
+</section>
+
