@@ -27,7 +27,7 @@
 
 <section  th:fragment="colaborador-form-field">
   <section id="supervisor-chefe-section" class="overflow-auto selection-section selection-colaborador">
-    <p class="mt-2">Selecione um supervisor responsável por este colaborador (Obrigatório):</p>
+    <p class="mt-2">Supervisores disponíveis. Caso não haja nenhum, o colaborador será submetido diretamente ao presidente.</p>
     <div  class="container-boxes d-flex justify-content-start gap-2">
       <div th:each="supervisor:${supervisores}" class="div-radio div-radio-supervisor form-check">
         <input type="checkbox" name="supervisor-chefe" th:value="${supervisor.getId()}" th:field="*{superiorDireto}" class="radio-input superior-selection"/>
@@ -38,12 +38,12 @@
       </div>
     </div>
   </section>
-  <section class="overflow-auto selection-section selection-colaborador colaborador-subordinado-section">
-    <p class="mt-2">Selecione os colaboradores subordinados a este colaborador (Opcional):</p>
+  <section th:if="${isUpdate}" class="overflow-auto selection-section selection-colaborador colaborador-subordinado-section">
+    <p class="mt-2">Colaboradores subordinados:</p>
     <div  class="container-boxes d-flex justify-content-start gap-2">
       <div th:each="funcionario:${funcionariosMedios}"
-           th:if="${(funcionario.superiorDireto == null || funcionario.superiorDireto.nome == colaborador.nome) && funcionario.nome != colaborador.nome}"
-           class="div-checkbox form-check checkbox-input">
+           th:if="${(funcionario.superiorDireto != null or funcionario.superiorDireto.nome == colaborador.nome) && funcionario.nome != colaborador.nome}"
+           class="div-checkbox form-check">
         <input type="checkbox" name="subordinados" th:value="${funcionario.getId()}"  th:field="*{subordinados}" class="checkbox-input"/>
         <p th:text="'ID: ' + ${funcionario.getId()}"></p>
         <p th:text="'Nome: ' + ${funcionario.getNome()}"></p>
@@ -55,8 +55,8 @@
 </section>
 
 <section th:fragment="supervisor-form-fields">
-  <section id="gerente-chefe-ection" class="overflow-auto selection-section selection-supervisor">
-    <p class="mt-2">Selecione um gerente responsável por este supervisor (Obrigatório):</p>
+  <section id="gerente-chefe-section" class="overflow-auto selection-section selection-supervisor">
+    <p class="mt-2">Gerentes disponíveis. Caso não haja nenhum, o colaborador será submetido diretamente ao presidente.</p>
     <div  class="container-boxes d-flex justify-content-start gap-2">
       <div th:each="gerente:${gerentes}" class="div-radio div-radio-gerente form-check">
         <input type="checkbox" name="gerente-chefe" th:value="${gerente.getId()}" th:field="*{superiorDireto}" class="radio-input superior-selection"/>
@@ -67,10 +67,10 @@
       </div>
     </div>
   </section>
-  <section class="overflow-auto selection-section selection-supervisor colaborador-subordinado-section">
-    <p class="mt-2">Selecione os colaboradores subordinados a este supervisor, caso disponível (Opcional):</p>
+  <section th:if="${isUpdate}" class="overflow-auto selection-section selection-supervisor colaborador-subordinado-section">
+    <p class="mt-2">Colaboradores subordinados a este supervisor:</p>
     <div  class="container-boxes d-flex justify-content-start gap-2">
-      <div th:each="funcionario:${funcionariosMedios}" th:if="${funcionario.superiorDireto == null || funcionario.superiorDireto.nome == colaborador.nome}" class="div-checkbox form-check checkbox-input">
+      <div th:each="funcionario:${funcionariosMedios}" th:if="${funcionario.superiorDireto != null || funcionario.superiorDireto.nome == colaborador.nome}" class="div-checkbox form-check">
         <input type="checkbox" name="subordinados" th:value="${funcionario.getId()}"  th:field="*{subordinados}" class="checkbox-input"/>
         <p th:text="'ID: ' + ${funcionario.getId()}"></p>
         <p th:text="'Nome: ' + ${funcionario.getNome()}"></p>
@@ -81,17 +81,30 @@
   </section>
 </section>
 
-<section th:fragment="gerente-form-field" id="supervisor-subordinado-section" class="overflow-auto selection-section selection-gerente">
-
-  <p class="mt-2">Selecione os supervisores subordinados a este gerente, caso disponível (Opcional):</p>
-  <div  class="container-boxes d-flex justify-content-start gap-2">
-    <div th:each="supervisor:${supervisores}" th:if="${supervisor.superiorDireto == null or supervisor.superiorDireto.nome == colaborador.nome}" class="div-checkbox form-check">
-      <input type="checkbox" name="subordinados" th:value="${supervisor.getId()}" th:field="*{subordinados}" class="checkbox-input"/>
-      <p th:text="'ID: ' + ${supervisor.getId()}"></p>
-      <p th:text="'Nome: ' + ${supervisor.getNome()}"></p>
-      <p th:text="'CPF: ' + ${supervisor.getCpf()}"></p>
-      <p th:text="'Nível Hierárquerico: ' + ${supervisor.getNivelHierarquico()}"></p>
+<section th:fragment="gerente-form-field">
+  <section id="presidente-chefe-section" class="overflow-auto selection-section selection-gerente">
+    <p class="mt-2">Todos os gerentes são subordinados diretamente ao presidente!</p>
+    <div  class="container-boxes d-flex justify-content-start gap-2">
+      <div class="box-colorized div-radio-gerente form-check div-checkbox-selected div-radio">
+        <input type="checkbox" name="presidente-chefe" th:value="${presidente.getId()}"  class="radio-input superior-selection" checked aria-readonly="true"/>
+        <p th:text="'ID: ' + ${presidente.getId()}"></p>
+        <p th:text="'Nome: ' + ${presidente.getNome()}"></p>
+        <p th:text="'CPF: ' + ${presidente.getCpf()}"></p>
+        <p th:text="'Nível Hierárquerico: ' + ${presidente.getNivelHierarquico()}"></p>
+      </div>
     </div>
-  </div>
+  </section>
+  <section th:if="${isUpdate}" id="supervisor-subordinado-section" class="overflow-auto selection-section selection-gerente">
+    <p class="mt-2">Supervisores subordinados a este gerente:</p>
+    <div  class="container-boxes d-flex justify-content-start gap-2">
+      <div th:each="supervisor:${supervisores}" th:if="${supervisor.superiorDireto != null or supervisor.superiorDireto.nome == colaborador.nome}" class="div-checkbox form-check">
+        <input type="checkbox" name="subordinados" th:value="${supervisor.getId()}" th:field="*{subordinados}" class="checkbox-input"/>
+        <p th:text="'ID: ' + ${supervisor.getId()}"></p>
+        <p th:text="'Nome: ' + ${supervisor.getNome()}"></p>
+        <p th:text="'CPF: ' + ${supervisor.getCpf()}"></p>
+        <p th:text="'Nível Hierárquerico: ' + ${supervisor.getNivelHierarquico()}"></p>
+      </div>
+    </div>
+  </section>
 </section>
 

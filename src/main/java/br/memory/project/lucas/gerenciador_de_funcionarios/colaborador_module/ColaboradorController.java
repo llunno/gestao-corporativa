@@ -31,6 +31,7 @@ public class ColaboradorController {
         model.addAttribute("funcionariosMedios", colaboradorService.findAllByNivelHierarquico("Colaborador"));
         model.addAttribute("gerentes", colaboradorService.findAllByNivelHierarquico("Gerente"));
         model.addAttribute("supervisores", colaboradorService.findAllByNivelHierarquico("Supervisor"));
+        model.addAttribute("presidente", colaboradorService.findByNivelHierarquico("Presidente"));
         model.addAttribute("isUpdate", false);
         return "colaborador-views/cadastro";
     }
@@ -42,6 +43,7 @@ public class ColaboradorController {
         model.addAttribute("funcionariosMedios", colaboradorService.findAllByNivelHierarquico("Colaborador"));
         model.addAttribute("gerentes", colaboradorService.findAllByNivelHierarquico("Gerente"));
         model.addAttribute("supervisores", colaboradorService.findAllByNivelHierarquico("Supervisor"));
+        model.addAttribute("presidente", colaboradorService.findByNivelHierarquico("Presidente"));
         model.addAttribute("isUpdate", true);
         return "colaborador-views/update";
     }

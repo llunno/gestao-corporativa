@@ -25,7 +25,7 @@ public class ColaboradorService implements IRepositoryMethods<Colaborador, Integ
     @Override
     public Colaborador save(Colaborador entity) {
 
-        if (entity.getNivelHierarquico().equals("Gerente")) {
+        if (entity.getNivelHierarquico().equals("Gerente") || entity.getSuperiorDireto() == null) {
             entity.setSuperiorDireto(iColaboradorRepository.findByNivelHierarquico("Presidente"));
         }
 
@@ -34,7 +34,6 @@ public class ColaboradorService implements IRepositoryMethods<Colaborador, Integ
                 subordinado.setSuperiorDireto(entity);
             });
         }
-
         return iColaboradorRepository.save(entity);
     }
 
@@ -50,12 +49,14 @@ public class ColaboradorService implements IRepositoryMethods<Colaborador, Integ
         colaboradorInDB.setDepartamento(entity.getDepartamento());
         colaboradorInDB.setNivelHierarquico(entity.getNivelHierarquico());
 
-
+        if (entity.getNivelHierarquico().equals("Gerente") || entity.getSuperiorDireto() == null) {
+            entity.setSuperiorDireto(iColaboradorRepository.findByNivelHierarquico("Presidente"));
+        }
 
         if (entity.getSubordinados() != null && entity.getSubordinados().size() != 0) {
 
             colaboradorInDB.getSubordinados().forEach(subordinado -> {
-                subordinado.setSuperiorDireto(null);
+                subordinado.setSuperiorDireto(iColaboradorRepository.findByNivelHierarquico("Presidente"));
             });
 
             entity.getSubordinados().forEach(subordinado -> {
@@ -63,7 +64,7 @@ public class ColaboradorService implements IRepositoryMethods<Colaborador, Integ
             });
         } else {
             colaboradorInDB.getSubordinados().forEach(subordinado -> {
-                subordinado.setSuperiorDireto(null);
+                subordinado.setSuperiorDireto(iColaboradorRepository.findByNivelHierarquico("Presidente"));
             });
         }
 
@@ -79,9 +80,8 @@ public class ColaboradorService implements IRepositoryMethods<Colaborador, Integ
 
         iColaboradorRepository.findById(id).ifPresent(colaborador ->
             colaborador.getSubordinados().forEach(subordinado -> {
-            subordinado.setSuperiorDireto(null);
+            subordinado.setSuperiorDireto(iColaboradorRepository.findByNivelHierarquico("Presidente"));
         }));
-
         iColaboradorRepository.deleteById(id);
     }
 
