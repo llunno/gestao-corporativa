@@ -104,10 +104,6 @@ public class ColaboradorService implements IRepositoryMethods<Colaborador, Integ
         return iColaboradorRepository.findAllByOrderByIdDesc();
     }
 
-    public String formatData(String data) {
-        return DateTimeFormatter.ofPattern("dd/MM/yyyy").format(DateTimeFormatter.ISO_LOCAL_DATE.parse(data));
-    }
-
     public Collection<Colaborador> findAllByNivelHierarquico(String nivelHierarquico) {
         return iColaboradorRepository.findAllByNivelHierarquico(nivelHierarquico);
     }
