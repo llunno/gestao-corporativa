@@ -42,8 +42,7 @@
                     <td>
                         <button class="btn btn-link" th:if="${colaborador.subordinados.size() > 0}" th:text="${colaborador.subordinados.size()}"
                                 data-bs-toggle="modal" th:data-bs-target="'#'+${colaborador.nome.toLowerCase().replace(' ', '')+colaborador.id+colaborador.cpf.replace('.','').replace('-','')}"></button>
-
-                        <a th:if="${colaborador.subordinados.size() <= 0}" th:text="${'-'}" disabled></a>
+                        <a th:if="${colaborador.subordinados.size() <= 0}" th:text="${'0'}" disabled></a>
                         <div class="modal fade" th:id="${colaborador.nome.toLowerCase().replace(' ', '')+colaborador.id+colaborador.cpf.replace('.','').replace('-','')}"
                              tabindex="-1" aria-labelledby="myModalLabel" aria-hidden="true">
                             <div class="modal-dialog">

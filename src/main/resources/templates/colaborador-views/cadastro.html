@@ -65,21 +65,48 @@
         const radioInputGerente = document.getElementById("gerente")
 
         radioInputColaborador.addEventListener("click", function () {
-            selectionColaborador.forEach(element => element.classList.remove("d-none"))
-            selectionGerente.forEach(element => element.classList.add("d-none"))
-            selectionSupervisor.forEach(element => element.classList.add("d-none"))
+            selectionColaborador.forEach(function (element) {
+                element.classList.remove("d-none")
+                element.querySelectorAll("input").forEach(input => input.disabled = false)
+            })
+            selectionGerente.forEach(function (element) {
+                element.classList.add("d-none")
+                element.querySelectorAll("input").forEach(input => input.disabled = true)
+            })
+            selectionSupervisor.forEach(function (element) {
+                element.classList.add("d-none")
+                element.querySelectorAll("input").forEach(input => input.disabled = true)
+            })
         })
 
         radioInputSupervisor.addEventListener("click", function () {
-            selectionColaborador.forEach(element => element.classList.add("d-none"))
-            selectionGerente.forEach(element => element.classList.add("d-none"))
-            selectionSupervisor.forEach(element => element.classList.remove("d-none"))
+            selectionColaborador.forEach(function (element) {
+                element.classList.add("d-none")
+                element.querySelectorAll("input").forEach(input => input.disabled = true)
+            })
+            selectionGerente.forEach(function (element) {
+                element.classList.add("d-none")
+                element.querySelectorAll("input").forEach(input => input.disabled = true)
+            })
+            selectionSupervisor.forEach(function (element) {
+                element.classList.remove("d-none")
+                element.querySelectorAll("input").forEach(input => input.disabled = false)
+            })
         })
 
         radioInputGerente.addEventListener("click", function () {
-            selectionColaborador.forEach(element => element.classList.add("d-none"))
-            selectionGerente.forEach(element => element.classList.remove("d-none"))
-            selectionSupervisor.forEach(element => element.classList.add("d-none"))
+            selectionColaborador.forEach(function (element) {
+                element.classList.add("d-none")
+                element.querySelectorAll("input").forEach(input => input.disabled = true)
+            })
+            selectionGerente.forEach(function (element) {
+                element.classList.remove("d-none")
+                element.querySelectorAll("input").forEach(input => input.disabled = false)
+            })
+            selectionSupervisor.forEach(function (element) {
+                element.classList.add("d-none")
+                element.querySelectorAll("input").forEach(input => input.disabled = true)
+            })
         })
     </script>
 </body>
