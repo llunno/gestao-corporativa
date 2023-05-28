@@ -17,7 +17,6 @@
         <label class="form-check-label" th:for="*{nivelHierarquico}" th:text="*{nivelHierarquico}">
         </label>
         <div th:if="*{nivelHierarquico == 'Gerente'}">
-            <input type="checkbox" id="president-checkbox" name="presidente-superior" th:value="${1000}" th:field="*{superiorDireto}" hidden>
             <section th:replace="~{fragments/common-form-fields :: gerente-form-field}"></section>
         </div>
         <div th:if="*{nivelHierarquico == 'Supervisor'}">

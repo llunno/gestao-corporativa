@@ -49,3 +49,7 @@ body {
 .form-group {
     margin: 2rem 0 2rem 0;
 }
+
+#gerente-section, #supervisor-section, #colaborador-section {
+    margin-bottom: 1rem;
+}

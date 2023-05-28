@@ -38,7 +38,7 @@ const remuneracaoField = document.querySelector(".input-remuneracao");
 remuneracaoField.addEventListener("load", mascaraMoeda);
 remuneracaoField.addEventListener("input", mascaraMoeda);
 
-// remoção de caracteres não numéricos da remuneração && checkin de campos obrigatórios
+// remoção de caracteres não numéricos da remuneração && checkin de campos obrigatórios ao ao enviar formulário
 const form = document.querySelector("#form-main");
 form.addEventListener("submit", function(event) {
     remuneracaoField.value = remuneracaoField.value.replace(/\D/g,"");
@@ -51,16 +51,11 @@ form.addEventListener("submit", function(event) {
 
     const superioresCheckboxes = document.querySelectorAll(".superior-selection");
     const superioresChecked = Array.from(superioresCheckboxes).some(function(checkbox) {
-        if (checkbox.disabled === false) {
-
-        }
         return checkbox.checked;
     });
 
     if (superioresChecked === false) {
-        event.preventDefault();
-        alert("É necessário selecionar ao menos um superior.");
-        return false;
+        return true;
     }
     else {
         return true;
@@ -99,6 +94,11 @@ radioDivs.forEach(function(radioDiv) {
 
     radio.addEventListener("click", function(event) {
         event.stopPropagation();
+        if (radio.name === "presidente-chefe") {
+            event.preventDefault();
+            return;
+        }
+
         radio.checked = !radio.checked;
         radioDiv.dispatchEvent(new Event("click"));
     });
@@ -115,6 +115,12 @@ radioDivs.forEach(function(radioDiv) {
             clickedRadio.checked = true;
             radioDiv.classList.add("div-checkbox-selected");
         } else {
+
+            if (clickedRadio.name === "presidente-chefe") {
+                event.preventDefault();
+                return;
+            }
+
             clickedRadio.checked = false;
             radioDiv.classList.remove("div-checkbox-selected");
         }
