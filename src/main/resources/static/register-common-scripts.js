@@ -1,3 +1,4 @@
+// máscara de cpf
 function maskcpf(v){
     v=v.replace(/\D/g,"");
     v=v.replace(/(\d{3})(\d)/,"$1.$2");
@@ -12,6 +13,8 @@ cpfElement.oninput = function(){
     cpfElement.value = maskcpf(cpfElement.value);
 }
 
+
+// máscara moeda
 function mascaraMoeda(event) {
     const onlyDigits = event.target.value
         .split("")
@@ -31,13 +34,40 @@ function maskCurrency(valor, locale = 'pt-BR', currency = 'BRL') {
 
 const remuneracaoField = document.querySelector(".input-remuneracao");
 
+// chamada da função de máscara de moeda
+remuneracaoField.addEventListener("load", mascaraMoeda);
 remuneracaoField.addEventListener("input", mascaraMoeda);
 
-document.querySelector("#form-main").addEventListener("submit", function(event) {
+// remoção de caracteres não numéricos da remuneração && checkin de campos obrigatórios
+const form = document.querySelector("#form-main");
+form.addEventListener("submit", function(event) {
     remuneracaoField.value = remuneracaoField.value.replace(/\D/g,"");
-    return true;
+    remuneracaoField.value = remuneracaoField.value.substring(0, remuneracaoField.value.length - 2);
+    let decimalPart = remuneracaoField.value.substring(remuneracaoField.value.length - 2);
+    if (decimalPart.length === 1) {
+        decimalPart = "0" + decimalPart;
+    }
+    remuneracaoField.value = remuneracaoField.value + "." + decimalPart;
+
+    const superioresCheckboxes = document.querySelectorAll(".superior-selection");
+    const superioresChecked = Array.from(superioresCheckboxes).some(function(checkbox) {
+        if (checkbox.disabled === false) {
+
+        }
+        return checkbox.checked;
+    });
+
+    if (superioresChecked === false) {
+        event.preventDefault();
+        alert("É necessário selecionar ao menos um superior.");
+        return false;
+    }
+    else {
+        return true;
+    }
 });
 
+// init datepicker e máscara de data
 $(document).ready(function(){
     $('.date-input').datepicker({
         format: 'dd/mm/yyyy',
@@ -46,6 +76,7 @@ $(document).ready(function(){
     });
 });
 
+// adicionado efeito de seleção para checkbox
 const checkboxDivs = document.querySelectorAll(".div-checkbox");
 checkboxDivs.forEach(function(element) {
 
@@ -61,6 +92,7 @@ checkboxDivs.forEach(function(element) {
     });
 });
 
+// modificando comportamento de checkbox para radio, selecionando apenas um e permitindo desmarcar o selecionado
 const radioDivs = document.querySelectorAll(".div-radio");
 radioDivs.forEach(function(radioDiv) {
     const radio = radioDiv.querySelector("input[type=checkbox]");
@@ -69,11 +101,9 @@ radioDivs.forEach(function(radioDiv) {
         event.stopPropagation();
         radio.checked = !radio.checked;
         radioDiv.dispatchEvent(new Event("click"));
-        console.log("radio click")
     });
 
     radioDiv.addEventListener("click", function(event) {
-        console.log("activated trought radio")
         event.stopPropagation();
         const clickedRadio = radioDiv.querySelector("input[type=checkbox]");
         if (!clickedRadio.checked) {
