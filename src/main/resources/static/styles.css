@@ -53,3 +53,7 @@ body {
 #gerente-section, #supervisor-section, #colaborador-section {
     margin-bottom: 1rem;
 }
+
+.table-wrapper{
+    max-height: 50rem;
+}
