@@ -86,7 +86,7 @@ public class ColaboradorController {
             return "colaborador-views/resolucao-conflitos";
         }
         else {
-            colaboradores.remove(0);
+            colaboradores.removeIf(colaborador -> colaborador.getNivelHierarquico().equals("Presidente"));
             model.addAttribute("listaTodosColaboradores", colaboradores);
             return "colaborador-views/resolucao-conflitos";
         }
