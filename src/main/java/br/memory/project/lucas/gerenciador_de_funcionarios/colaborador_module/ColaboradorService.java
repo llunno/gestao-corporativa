@@ -5,9 +5,11 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Service
@@ -95,7 +97,11 @@ public class ColaboradorService implements IRepositoryMethods<Colaborador, Integ
         return iColaboradorRepository.findAll();
     }
 
-    @Override
+    public Page<Colaborador> findByYearFiltered(Integer year, Integer page, Integer size) {
+        Pageable pageable = PageRequest.of(page - 1, size);
+        return iColaboradorRepository.getByYearFiltered(year, pageable);
+    }
+
     public Collection<Colaborador> findByYear(Integer year) {
         return iColaboradorRepository.getByYear(year);
     }
@@ -110,6 +116,11 @@ public class ColaboradorService implements IRepositoryMethods<Colaborador, Integ
 
     public Colaborador findByNivelHierarquico(String nivelHierarquico) {
         return iColaboradorRepository.findByNivelHierarquico(nivelHierarquico);
+    }
+
+    public Page<Colaborador> findAllPaginated(Integer page, Integer size) {
+        Pageable pageable = PageRequest.of(page - 1, size);
+        return iColaboradorRepository.findAllByOrderByIdDesc(pageable);
     }
 
     public String encontrarMediador(Integer id, Integer id2) throws JsonProcessingException {

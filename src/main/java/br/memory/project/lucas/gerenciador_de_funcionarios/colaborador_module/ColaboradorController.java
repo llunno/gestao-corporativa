@@ -2,6 +2,8 @@ package br.memory.project.lucas.gerenciador_de_funcionarios.colaborador_module;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -63,8 +65,23 @@ public class ColaboradorController {
 
     @GetMapping("/lista")
     public String exibirListaColaboradores(Model model) {
-        List<Colaborador> colaboradores = (List<Colaborador>) colaboradorService.findAllByIdOrdered();
-        model.addAttribute("listaColaboradores", colaboradores);
+        try {
+            return exibirListaColaboradoresPaginada(model,1);
+        } catch (Exception e) {
+            List<Colaborador> colaboradores = (List<Colaborador>) colaboradorService.findAllByIdOrdered();
+            model.addAttribute("listaColaboradores", colaboradores);
+            return "colaborador-views/listagem-colaboradores";
+        }
+    }
+
+    @GetMapping("/lista/{pagina}")
+    public String exibirListaColaboradoresPaginada(Model model, @PathVariable Integer pagina) {
+        int size = 8;
+        Page<Colaborador> paginaColaboradores = colaboradorService.findAllPaginated(pagina, size);
+        model.addAttribute("listaColaboradores", paginaColaboradores.getContent());
+        model.addAttribute("paginaAtual", pagina);
+        model.addAttribute("totalPaginas", paginaColaboradores.getTotalPages());
+        model.addAttribute("totalItens", paginaColaboradores.getTotalElements());
         return "colaborador-views/listagem-colaboradores";
     }
 
@@ -73,8 +90,9 @@ public class ColaboradorController {
         if (ano == null || ano.isEmpty()) {
             return "redirect:/colaborador/lista";
         }
-        List<Colaborador> colaboradores = (List<Colaborador>) colaboradorService.findByYear(Integer.valueOf(ano));
+        Collection<Colaborador> colaboradores = colaboradorService.findByYear(Integer.valueOf(ano));
         model.addAttribute("listaColaboradores", colaboradores);
+        model.addAttribute("isFilter", true);
         return "colaborador-views/listagem-colaboradores";
     }
 

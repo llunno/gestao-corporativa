@@ -1,6 +1,9 @@
 package br.memory.project.lucas.gerenciador_de_funcionarios.utils;
 
+import br.memory.project.lucas.gerenciador_de_funcionarios.colaborador_module.Colaborador;
 import org.springframework.stereotype.Repository;
+
+import java.util.Collection;
 
 @Repository
 public interface IRepositoryMethods<T, ID> {
@@ -9,6 +12,5 @@ public interface IRepositoryMethods<T, ID> {
 
     void delete(ID id);
     T findById(ID id);
-    Iterable<T> findByYear(Integer dataAdmissao);
     Iterable<T> findAll();
 }

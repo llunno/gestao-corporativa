@@ -10,6 +10,7 @@
     <nav th:replace="~{fragments/nav-fragment :: nav}"></nav>
     <div class="container-fluid my-4 mx-auto">
         <h1 class="text-center">Tabela de colaboradores</h1>
+        <button class="btn btn-dark mt-2 mb-2" onclick="cadastrar()">Cadastrar +</button>
         <section class="table-wrapper overflow-auto m-0 p-0">
             <table class="table table-hover align-middle text-center m-0" style="white-space:nowrap">
                 <thead>
@@ -81,7 +82,28 @@
                 </tbody>
             </table>
         </section>
-        <button class="btn btn-dark mt-2" onclick="cadastrar()">Cadastrar +</button>
+        <nav th:if="${totalPaginas != null}" aria-label="Page navigation" class="my-2">
+            <ul class="pagination">
+                <li class="page-item">
+                    <span th:text="${'Número de itens: ' + totalItens}" class="page-link disabled"></span>
+                </li>
+                <li class="page-item">
+                    <span th:text="${'Páginas totais: ' + totalPaginas}" class="page-link disabled"></span>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" th:if="${paginaAtual > 1}" th:href="@{'/colaborador/lista/' + ${paginaAtual - 1}}">Anterior</a>
+                    <span th:unless="${paginaAtual > 1}" class="page-link disabled">Anterior</span>
+                </li>
+                <li th:each="pag:${#numbers.sequence(1, totalPaginas)}" class="page-item">
+                    <a class="page-link" th:if="${pag != paginaAtual}" th:href="@{/colaborador/lista/{pag}(pag=${pag})}" th:text="${pag}"></a>
+                    <span class="page-link active" th:unless="${pag != paginaAtual}" th:text="${pag}"></span>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" th:if="${paginaAtual < totalPaginas}" th:href="@{'/colaborador/lista/' + ${paginaAtual + 1}}">Próxima</a>
+                    <span th:unless="${paginaAtual < totalPaginas}" class="page-link disabled">Próxima</span>
+                </li>
+            </ul>
+        </nav>
     </div>
 
     <footer th:replace="~{fragments/footer-fragment :: footer}"></footer>
